@@ -6,7 +6,7 @@
 /*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/05 22:02:55 by nicola           ###   ########.fr       */
+/*   Updated: 2018/02/05 22:24:34 by nicola           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,32 +42,13 @@ typedef struct		s_mlx_struct
 
 typedef struct		s_cfg_struct
 {
-	float			x_zoom;
-	float			y_zoom;
-	float			x_move;
-	float			y_move;
-	float			x_center;
-	float			y_center;
-	float			x_julia;
-	float			y_julia;
-	char			mode;
-	char			progressive;
-
-	int				f_flag;
-	int				max_iter;
-	int				max_iter_original;
-
-	int				c_flag;
-	int				c_slices;
-	int				c_s_size;
-	unsigned int	c_inside;
-	unsigned int	(*i_to_c[10])();
-	void			(*fractal)();
+	int				cfgs;
 }					t_cfg;
 
 typedef struct		s_scn_struct
 {
-	int				n_obj;
+	float			cam_p[3];
+	float			cam_v[3];
 }					t_scn;
 
 typedef struct		s_data_struct

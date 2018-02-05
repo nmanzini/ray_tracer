@@ -6,7 +6,7 @@
 /*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/05 01:15:57 by nicola           ###   ########.fr       */
+/*   Updated: 2018/02/05 22:25:08 by nicola           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,18 +29,7 @@ t_mlx	*mlx_data_init_return(t_mlx *md)
 
 void	cfg_setup(t_cfg *cf)
 {
-	cf->x_zoom = 4;
-	cf->y_zoom = cf->x_zoom / WIDTH * HEIGHT;
-	cf->x_center = 0;
-	cf->y_center = 0;
-	cf->x_move = WIDTH / 2;
-	cf->y_move = HEIGHT / 2;
-	cf->mode = 'z';
-	cf->max_iter_original = 64;
-	cf->max_iter = 64;
-	cf->c_slices = cf->max_iter / 8;
-	cf->c_s_size = cf->max_iter / (float)cf->c_slices;
-	cf->c_inside = WHITE;
+
 }
 
 t_cfg	*cfg_data_init(t_cfg *cf)
@@ -49,11 +38,6 @@ t_cfg	*cfg_data_init(t_cfg *cf)
 
 	cf = &actual_cfg;
 	cfg_setup(cf);
-	cf->x_julia = 0.285;
-	cf->y_julia = 0.01;
-	cf->f_flag = 0;
-	cf->c_flag = 0;
-	cf->progressive = 'n';
 	return (cf);
 }
 

@@ -6,7 +6,7 @@
 /*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:02:37 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/05 01:12:57 by nicola           ###   ########.fr       */
+/*   Updated: 2018/02/05 22:25:31 by nicola           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,5 @@ void	call_keys_general(int keycode, t_data *dt)
 int		call_keys(int keycode, t_data *dt)
 {
 	call_keys_general(keycode, dt);
-	display(dt, dt->cf->fractal);
 	return (0);
 }
