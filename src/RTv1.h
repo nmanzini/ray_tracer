@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RTv1.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/05 22:24:34 by nicola           ###   ########.fr       */
+/*   Updated: 2018/02/06 13:42:36 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,9 @@ typedef struct		s_scn_struct
 {
 	float			cam_p[3];
 	float			cam_v[3];
+	float			screen_s[3];
+	float			fov;
+	int				res[2];
 }					t_scn;
 
 typedef struct		s_data_struct
@@ -59,6 +62,8 @@ typedef struct		s_data_struct
 	t_scn			*sc;
 	char			*name;
 }					t_data;
+
+# define PI_R		3.14142/180
 
 # define WIDTH		1024
 # define HEIGHT		512

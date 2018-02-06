@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: nicola <nicola@student.42.fr>              +#+  +:+       +#+         #
+#    By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/29 17:51:18 by nmanzini          #+#    #+#              #
-#    Updated: 2018/02/05 22:03:11 by nicola           ###   ########.fr        #
+#    Updated: 2018/02/06 11:17:36 by nmanzini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,7 @@ $(LIBFT):
 	-@ make -C libft 
 
 $(NAME): $(LIBFT) $(OBJ)
-	-@ gcc $(MLX_FLAGS_MAC_AIR)  $(OBJ) $(LIBFT) -o $(NAME)
+	-@ gcc $(MLX_FLAGS)  $(OBJ) $(LIBFT) -o $(NAME)
 
 clean:
 	-@ /bin/rm -f $(OBJ)
