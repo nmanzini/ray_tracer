@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/06 14:43:01 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/06 16:39:32 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ t_scn	*scn_data_init(t_scn *sc)
 	sc->screen_s[2] = 1;
 	sc->screen_s[0] = sin(sc->fov / 2 * PI_R) * sc->screen_s[2] = 1;
 	sc->screen_s[1] = sc->screen_s[0] / (float) sc->res[0] * sc->res[1];
+	//
 	
 	return (sc);
 }

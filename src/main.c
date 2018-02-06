@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/06 11:22:04 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/06 16:39:33 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,6 @@ float	float_abs(float f)
 	else
 		return (f);
 }
-
-
 
 int		main(int ac, char **av)
 {
