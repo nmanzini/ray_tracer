@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RTv1.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/06 13:42:36 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/07 18:36:02 by nicola           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,14 @@
 # include "../minilibx_macos/mlx.h"
 # include "../libft/libft.h"
 # include <math.h>
+
+// remove!!!
+# include <stdio.h>
+
+# define PI_R		3.14142/180
+
+# define WIDTH		1024
+# define HEIGHT		512
 
 typedef struct		s_image_struct
 {
@@ -49,10 +57,16 @@ typedef struct		s_scn_struct
 {
 	float			cam_p[3];
 	float			cam_v[3];
+	float			ray_v[3];
 	float			screen_s[3];
 	float			fov;
 	int				res[2];
 }					t_scn;
+
+typedef struct 		s_scr_struct
+{
+	
+}					t_scr;
 
 typedef struct		s_data_struct
 {
@@ -62,11 +76,6 @@ typedef struct		s_data_struct
 	t_scn			*sc;
 	char			*name;
 }					t_data;
-
-# define PI_R		3.14142/180
-
-# define WIDTH		1024
-# define HEIGHT		512
 
 # define BLACK		0x00000000
 # define WHITE		0x00FFFFFF
