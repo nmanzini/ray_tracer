@@ -6,7 +6,7 @@
 /*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/07 18:37:32 by nicola           ###   ########.fr       */
+/*   Updated: 2018/02/07 19:10:23 by nicola           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,32 @@ void	normalize(float *vec)
 
 void	ray(t_scn *sc)
 {
+	int i;
+	int j;
+
+	i = -1;
+	while (++i < sc->res[1])
+	{
+		j = -1;
+		while (++j < sc->res[0])
+		{
+			sc->ray_v[0] = - (sc->screen_s[0] / 2) + sc->screen_s[0] / (sc->res[0] - 1) * j;
+			sc->ray_v[1] = (sc->screen_s[1] / 2) - sc->screen_s[1] / (sc->res[1] - 1) * i;
+			sc->ray_v[2] = sc->screen_s[2];
+						// normalize (sc->ray_v);
+
+			print_vector(sc->ray_v,ft_strjoin(ft_itoa(j),ft_itoa(i)));
+		}
+		printf("\n");
+	}
 
 }
+
+
+// TODO:
+// test with different resolutions
+// lokk how to turn the camera and teh screen_s
+// see if would be usefull to malloc the rays
 
 int		main(int ac, char **av)
 {
@@ -55,11 +79,10 @@ int		main(int ac, char **av)
 
 	// img_square(dt->md, BLUE);
 
-	print_vector(dt->sc->cam_v, "Pre normalization");
-	normalize(dt->sc->cam_v);
-	print_vector(dt->sc->cam_v, "Post normalization");
-	print_vector(dt->sc->screen_s, "screen_s");
 
+	print_vector(dt->sc->screen_s, "screen_s\n");
+
+	ray(dt->sc);
 	// mlx_key_hook(dt->md->win, call_keys, dt);
 	// mlx_loop(dt->md->mlx);
 	return (0);

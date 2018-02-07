@@ -6,7 +6,7 @@
 /*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/07 18:42:50 by nicola           ###   ########.fr       */
+/*   Updated: 2018/02/07 19:09:06 by nicola           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,8 @@ t_scn	*scn_data_init(t_scn *sc)
 	//fov angle
 	sc->fov = 90;
 	// actual screen resolution;
-	sc->res[0] = WIDTH;
-	sc->res[1] = HEIGHT;
+	sc->res[0] = 6;
+	sc->res[1] = 3;
 	// screen sizes: 2 = distance, 0 = x size in real diension, 1 = y size in real dimensions
 	sc->screen_s[2] = 1;
 	sc->screen_s[0] = tan(sc->fov / 2 * PI_R) * sc->screen_s[2];
