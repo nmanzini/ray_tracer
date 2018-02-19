@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RTv1.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/07 18:47:34 by nicola           ###   ########.fr       */
+/*   Updated: 2018/02/19 19:21:14 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 
 # define PI_R		3.14142/180
 
-# define WIDTH		1024
+# define WIDTH		512
 # define HEIGHT		512
 
 typedef struct		s_image_struct
@@ -55,9 +55,16 @@ typedef struct		s_cfg_struct
 
 typedef struct		s_scn_struct
 {
+	int				max_depth;
 	float			cam_p[3];
 	float			cam_v[3];
+	float			cam_a[3];
 	float			ray_v[3];
+	float			sphere[4];
+	float			x_sphere[4];
+	float			y_sphere[4];
+	float			z_sphere[4];
+	float			a_sphere[4];
 	float			screen_s[3];
 	float			fov;
 	int				res[2];
@@ -118,5 +125,9 @@ void				img_square_dim(t_mlx *md, int *p1, int *p2,
 */
 unsigned int		rgb(int red, int green, int blue);
 void				fractal_color(t_data *dt, int x, int y, int iter);
+
+void	rotate_v(float *vec,float *angles);
+int	ray_sphere(float *vec, float *pos, float *sphere, float	t);
+
 
 #endif
