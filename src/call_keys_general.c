@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:02:37 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/20 16:54:42 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/20 18:27:00 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,32 +33,32 @@ void	call_keys_camera_mov(int keycode, t_data *dt)
 {
 	if (keycode == 13)
 	{
-		ft_putendl("W		move forward\n");
+		ft_putendl("W		move forward");
 		dt->sc->cam_p[2] += 0.5;
 	}
 	else if (keycode == 1)
 	{
-		ft_putendl("S		move backward\n");
+		ft_putendl("S		move backward");
 		dt->sc->cam_p[2] -= 0.5;
 	}
 	else if (keycode == 0)
 	{
-		ft_putendl("A		move left\n");
+		ft_putendl("A		move left");
 		dt->sc->cam_p[0] -= 0.5;
 	}
 	else if (keycode == 2)
 	{
-		ft_putendl("D		move right\n");
+		ft_putendl("D		move right");
 		dt->sc->cam_p[0] += 0.5;
 	}
 	else if (keycode == 12)
 	{
-		ft_putendl("Q		move down\n");
+		ft_putendl("Q		move down");
 		dt->sc->cam_p[1] -= 0.5;
 	}
 	else if (keycode == 14)
 	{
-		ft_putendl("E		move up\n");
+		ft_putendl("E		move up");
 		dt->sc->cam_p[1] += 0.5;
 	}
 }
@@ -67,22 +67,22 @@ void	call_keys_camera_rot(int keycode, t_data *dt)
 {
 	if (keycode == 124)
 	{
-		ft_putendl("->		rotate right\n");
+		ft_putendl("->		rotate right");
 		dt->sc->cam_a[1] += 5;
 	}
 	else if (keycode == 123)
 	{
-		ft_putendl("<-		rotate left\n");
+		ft_putendl("<-		rotate left");
 		dt->sc->cam_a[1] -= 5;
 	}
 	else if (keycode == 126)
 	{
-		ft_putendl("^		rotate down\n");
+		ft_putendl("^		rotate up");
 		dt->sc->cam_a[0] -= 5;
 	}
 	else if (keycode == 125)
 	{
-		ft_putendl("v		rotate up\n");
+		ft_putendl("v		rotate down");
 		dt->sc->cam_a[0] += 5;
 	}
 }
@@ -91,16 +91,36 @@ void	call_keys_camera_lens(int keycode, t_data *dt)
 {
 	if (keycode == 78)
 	{
-		ft_putendl("-		smaller fov\n");
+		ft_putendl("-		smaller fov");
 		dt->sc->fov += 10;
 	}
 	else if (keycode == 69)
 	{
-		ft_putendl("+		bigger fov\n ");
+		ft_putendl("+		bigger fov");
 		dt->sc->fov -= 10;
 	}
-	ft_putnbr(dt->sc->fov);
-	ft_putchar(10);
+}
+
+void	call_keys_resolution(int keycode, t_data *dt)
+{
+	if (keycode == 33)
+	{
+		ft_putendl("[		smaller resolution");
+		if (dt->sc->res[0] != 16 && dt->sc->res[1] != 16)
+		{
+			dt->sc->res[0] /= 2;
+			dt->sc->res[1] /= 2;
+		}
+	}
+	else if (keycode == 30)
+	{
+		ft_putendl("]		bigger resolution");
+		if (dt->sc->res[0] < WIDTH && dt->sc->res[1] < HEIGHT)
+		{
+			dt->sc->res[0] *= 2;
+			dt->sc->res[1] *= 2;
+		}
+	}
 }
 
 int		call_keys(int keycode, t_data *dt)
@@ -109,6 +129,7 @@ int		call_keys(int keycode, t_data *dt)
 	call_keys_camera_mov(keycode, dt);
 	call_keys_camera_rot(keycode, dt);
 	call_keys_camera_lens(keycode, dt);
+	call_keys_resolution(keycode, dt);
 	display(dt);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/20 16:51:13 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/20 18:14:53 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,15 @@ t_str	*str_data_init(t_str *st)
 	st->x = 18;
 	st->y = 18;
 	return (st);
+}
+
+void	update_screen(t_scn *sc)
+{
+	// screen sizes: 2 = distance, 0 = x size in real dimension, 1 = y size in real dimension
+	sc->screen_s[2] = 1;
+	sc->screen_s[0] = tan(sc->fov / 2 * PI_R) * sc->screen_s[2];
+	sc->screen_s[1] = sc->screen_s[0] / (float) sc->res[0] * sc->res[1];
+
 }
 
 t_scn	*scn_data_init(t_scn *sc)
@@ -105,12 +114,10 @@ t_scn	*scn_data_init(t_scn *sc)
 	sc->fov = 90;
 
 	// actual screen resolution;
-	sc->res[0] = WIDTH;
-	sc->res[1] = HEIGHT;
-	// screen sizes: 2 = distance, 0 = x size in real dimension, 1 = y size in real dimension
-	sc->screen_s[2] = 1;
-	sc->screen_s[0] = tan(sc->fov / 2 * PI_R) * sc->screen_s[2];
-	sc->screen_s[1] = sc->screen_s[0] / (float) sc->res[0] * sc->res[1];
+	sc->res[0] = WIDTH / 2;
+	sc->res[1] = HEIGHT / 2;
+	update_screen(sc);
+	
 	return (sc);
 }
 

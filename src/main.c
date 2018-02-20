@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/20 16:55:53 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/20 18:20:00 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ void	normalize(float *vec)
 	vec[2] /= len;
 }
 
+
+
 void	ray(t_data	*dt)
 {
 	int		i;
@@ -47,10 +49,7 @@ void	ray(t_data	*dt)
 	float	ray[3];
 	float		t;
 
-	dt->sc->screen_s[2] = 1;
-	dt->sc->screen_s[0] = tan(dt->sc->fov / 2 * PI_R) * dt->sc->screen_s[2];
-	dt->sc->screen_s[1] = dt->sc->screen_s[0] / (float) dt->sc->res[0] * dt->sc->res[1];
-
+	update_screen(dt->sc);
 	i = -1;
 	while (++i < dt->sc->res[1])
 	{
@@ -69,25 +68,25 @@ void	ray(t_data	*dt)
 			{
 				if (ray_sphere(ray,dt->sc->cam_p,dt->sc->x_sphere, t))
 				{
-					fill_pixel(dt->md,j,i,RED);
+					fill_pixel_res(dt,j,i,RED);
 					break;
 				}
 				else if (ray_sphere(ray,dt->sc->cam_p,dt->sc->y_sphere, t))
 				{
-					fill_pixel(dt->md,j,i,GREEN);
+					fill_pixel_res(dt,j,i,GREEN);
 					break;
 				}
 				else if (ray_sphere(ray,dt->sc->cam_p,dt->sc->z_sphere, t))
 				{
-					fill_pixel(dt->md,j,i,BLUE);
+					fill_pixel_res(dt,j,i,BLUE);
 					break;
 				}
 				else if (ray_sphere(ray,dt->sc->cam_p,dt->sc->a_sphere, t))
 				{
-					fill_pixel(dt->md,j,i,WHITE);
+					fill_pixel_res(dt,j,i,WHITE);
 					break;
 				}
-				t += 0.2;
+				t += 0.1;
 			}
 			// print_vector(ray,ft_strjoin(ft_itoa(j),ft_itoa(i)));
 		}
@@ -110,7 +109,7 @@ int	ray_sphere(float *vec, float *pos, float *sphere, float	t)
 	s[2] = sphere[2] - p[2];
 	s[3] = s[0] * s[0] + s[1] * s[1] + s[2] * s[2];
 	s[4] = sphere[3] * sphere[3];
-	if (s[3] <= s[4] + 0.05 && s[3] >= s[4] - 0.05)
+	if (s[3] <= s[4] + 0.1 && s[3] >= s[4] - 0.1)
 		return (1);
 	else
 		return (0);

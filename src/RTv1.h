@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/20 16:50:34 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/20 18:27:31 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 
 # define PI_R		3.14142/180
 
-# define WIDTH		512
-# define HEIGHT		512
+# define WIDTH		1024
+# define HEIGHT		1024
 
 typedef struct		s_image_struct
 {
@@ -105,6 +105,7 @@ t_mlx				*mlx_data_init_return(t_mlx *md);
 void				cfg_setup(t_cfg *cf);
 t_cfg				*cfg_data_init(t_cfg *cf);
 t_data				*init_data(t_data *dt);
+void	update_screen(t_scn *sc);
 /*
 ** call_keys_general.c
 */
@@ -119,6 +120,7 @@ void				img_square(t_mlx *md, unsigned int color);
 void				fill_pixel(t_mlx *md, int x, int y,
 								unsigned int color);
 void	display(t_data	*dt);
+void	fill_pixel_res(t_data *dt,int r_x, int r_y, unsigned int color);
 void				img_square_dim(t_mlx *md, int *p1, int *p2,
 								unsigned int color);
 /*
