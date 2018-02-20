@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/19 19:21:14 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/20 16:50:34 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ typedef struct		s_data_struct
 /*
 ** main.c
 */
+void				ray(t_data	*dt);
 float				float_abs(float f);
 int					read_input(t_data *dt, int ac, char **av);
 int					motion_function(int x, int y, t_data *dt);
@@ -117,7 +118,7 @@ void				make_image(t_mlx *md);
 void				img_square(t_mlx *md, unsigned int color);
 void				fill_pixel(t_mlx *md, int x, int y,
 								unsigned int color);
-void				display(t_data *dt, void (*f)(t_data*));
+void	display(t_data	*dt);
 void				img_square_dim(t_mlx *md, int *p1, int *p2,
 								unsigned int color);
 /*

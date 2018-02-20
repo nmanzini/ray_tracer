@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/19 19:30:45 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/20 16:55:53 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,10 @@ void	ray(t_data	*dt)
 	float	ray[3];
 	float		t;
 
+	dt->sc->screen_s[2] = 1;
+	dt->sc->screen_s[0] = tan(dt->sc->fov / 2 * PI_R) * dt->sc->screen_s[2];
+	dt->sc->screen_s[1] = dt->sc->screen_s[0] / (float) dt->sc->res[0] * dt->sc->res[1];
+
 	i = -1;
 	while (++i < dt->sc->res[1])
 	{
@@ -56,7 +60,7 @@ void	ray(t_data	*dt)
 			ray[0] = - (dt->sc->screen_s[0] / 2) + dt->sc->screen_s[0] / (dt->sc->res[0] - 1) * j;
 			ray[1] = (dt->sc->screen_s[1] / 2) - dt->sc->screen_s[1] / (dt->sc->res[1] - 1) * i;
 			ray[2] = dt->sc->screen_s[2];
-			normalize (ray);
+			// normalize (ray);
 			rotate_v(ray, dt->sc->cam_a);
 
 			t = 0;
@@ -83,12 +87,7 @@ void	ray(t_data	*dt)
 					fill_pixel(dt->md,j,i,WHITE);
 					break;
 				}
-				else if (ray_sphere(ray,dt->sc->cam_p,dt->sc->sphere, t))
-				{
-					fill_pixel(dt->md,j,i,RED);
-					break;
-				}
-				t += 0.1;
+				t += 0.2;
 			}
 			// print_vector(ray,ft_strjoin(ft_itoa(j),ft_itoa(i)));
 		}
@@ -153,8 +152,8 @@ void	rotate_y(float degree, float *xp, float *yp, float *zp)
 
 void	rotate_v(float *vec,float *angles)
 {
-	rotate_y(angles[1], &vec[0], &vec[1], &vec[2]);
 	rotate_x(angles[0], &vec[0], &vec[1], &vec[2]);
+	rotate_y(angles[1], &vec[0], &vec[1], &vec[2]);
 	rotate_z(angles[2], &vec[0], &vec[1], &vec[2]);
 }
 
@@ -163,6 +162,9 @@ void	rotate_v(float *vec,float *angles)
 // lokk how to turn the camera and teh screen_s
 // look hot to then move the camera
 // see if would be usefull to malloc the rays
+
+
+
 
 int		main(int ac, char **av)
 {
@@ -177,8 +179,7 @@ int		main(int ac, char **av)
 
 	print_vector(dt->sc->screen_s, "screen_s\n");
 
-	ray(dt);
-	mlx_put_image_to_window(dt->md->mlx,dt-> md->win, dt->md->ip->image, 0, 0);
+	display(dt);
 	mlx_key_hook(dt->md->win, call_keys, dt);
 	mlx_loop(dt->md->mlx);
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/19 19:29:53 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/20 16:51:13 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,12 @@ t_scn	*scn_data_init(t_scn *sc)
 
 	sc = &actual_sc;
 	// max_depth
-	sc->max_depth = 30;
+	sc->max_depth = 10;
 
 	//camera position
-	sc->cam_p[0] = 5;
-	sc->cam_p[1] = 5;
-	sc->cam_p[2] = 20;
+	sc->cam_p[0] = 1;
+	sc->cam_p[1] = 1;
+	sc->cam_p[2] = -5;
 
 	// camera startingdirection
 	// NOT IN USE
@@ -72,7 +72,7 @@ t_scn	*scn_data_init(t_scn *sc)
 
 	// camera angles 
 	sc->cam_a[0] = 0;
-	sc->cam_a[1] = 180;
+	sc->cam_a[1] = 0;
 	sc->cam_a[2] = 0;
 
 	// sphere data
@@ -105,10 +105,10 @@ t_scn	*scn_data_init(t_scn *sc)
 	sc->fov = 90;
 
 	// actual screen resolution;
-	sc->res[0] = 512;
-	sc->res[1] = 512;
-	// screen sizes: 2 = distance, 0 = x size in real diension, 1 = y size in real dimensions
-	sc->screen_s[2] = 0.5;
+	sc->res[0] = WIDTH;
+	sc->res[1] = HEIGHT;
+	// screen sizes: 2 = distance, 0 = x size in real dimension, 1 = y size in real dimension
+	sc->screen_s[2] = 1;
 	sc->screen_s[0] = tan(sc->fov / 2 * PI_R) * sc->screen_s[2];
 	sc->screen_s[1] = sc->screen_s[0] / (float) sc->res[0] * sc->res[1];
 	return (sc);

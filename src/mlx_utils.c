@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mlx_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:21:46 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/05 01:14:25 by nicola           ###   ########.fr       */
+/*   Updated: 2018/02/20 16:45:18 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,9 @@ void	make_image(t_mlx *md)
 	md->ip->lst = (int *)mlx_get_data_addr(md->ip->image, &bpp, &s_l, &endian);
 }
 
-void	display(t_data *dt, void (*f)(t_data*))
+void	display(t_data	*dt)
 {
-	f(dt);
-	mlx_put_image_to_window(dt->md->mlx, dt->md->win, dt->md->ip->image, 0, 0);
+	img_square(dt->md,BLACK);
+	ray(dt);
+	mlx_put_image_to_window(dt->md->mlx,dt-> md->win, dt->md->ip->image, 0, 0);
 }
