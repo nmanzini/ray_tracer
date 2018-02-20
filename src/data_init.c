@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/20 18:14:53 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/20 18:39:22 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,8 +114,8 @@ t_scn	*scn_data_init(t_scn *sc)
 	sc->fov = 90;
 
 	// actual screen resolution;
-	sc->res[0] = WIDTH / 2;
-	sc->res[1] = HEIGHT / 2;
+	sc->res[0] = WIDTH / 4;
+	sc->res[1] = HEIGHT / 4;
 	update_screen(sc);
 	
 	return (sc);

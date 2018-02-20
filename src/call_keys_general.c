@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:02:37 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/20 18:27:00 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/20 19:11:37 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,22 +68,22 @@ void	call_keys_camera_rot(int keycode, t_data *dt)
 	if (keycode == 124)
 	{
 		ft_putendl("->		rotate right");
-		dt->sc->cam_a[1] += 5;
+		dt->sc->cam_a[1] += 10;
 	}
 	else if (keycode == 123)
 	{
 		ft_putendl("<-		rotate left");
-		dt->sc->cam_a[1] -= 5;
+		dt->sc->cam_a[1] -= 10;
 	}
 	else if (keycode == 126)
 	{
 		ft_putendl("^		rotate up");
-		dt->sc->cam_a[0] -= 5;
+		dt->sc->cam_a[0] -= 10;
 	}
 	else if (keycode == 125)
 	{
 		ft_putendl("v		rotate down");
-		dt->sc->cam_a[0] += 5;
+		dt->sc->cam_a[0] += 10;
 	}
 }
 

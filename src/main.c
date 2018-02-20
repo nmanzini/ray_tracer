@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/20 18:20:00 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/20 19:00:03 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,10 +157,7 @@ void	rotate_v(float *vec,float *angles)
 }
 
 // TODO:
-// test with different resolutions
-// lokk how to turn the camera and teh screen_s
-// look hot to then move the camera
-// see if would be usefull to malloc the rays
+// improve the camera movements to follow the camera orientation
 
 
 
