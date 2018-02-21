@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:21:46 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/20 18:26:13 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/21 14:56:37 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,11 @@ void	fill_pixel_res(t_data *dt,int r_x, int r_y, unsigned int color)
 	int ij[2];
 
 
-	if (dt->sc->res[0] == 0 || dt->sc->res[0] == 0)
+	if (dt->ca->res[0] == 0 || dt->ca->res[0] == 0)
 		return ;
 	// ratio is window / resolution , usually higher than 1
-	ratio[0] = dt->md->width / dt->sc->res[0];
-	ratio[1] = dt->md->height / dt->sc->res[1];
+	ratio[0] = dt->md->width / dt->ca->res[0];
+	ratio[1] = dt->md->height / dt->ca->res[1];
 
 	win[0] = r_x * ratio[0];
 	win[1] = r_y * ratio[1];

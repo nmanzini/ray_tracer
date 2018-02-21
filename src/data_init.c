@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/20 18:39:22 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/21 15:13:27 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ t_mlx	*mlx_data_init_return(t_mlx *md)
 	md->width = WIDTH;
 	md->height = HEIGHT;
 	md->mlx = mlx_init();
-	md->win = mlx_new_window(md->mlx, md->width, md->height, "fractol");
+	md->win = mlx_new_window(md->mlx, md->width, md->height, "RTv1");
 	make_image(md);
 	return (md);
 }
@@ -51,13 +51,78 @@ t_str	*str_data_init(t_str *st)
 	return (st);
 }
 
-void	update_screen(t_scn *sc)
+void	*cam_data_init(t_cam *ca)
 {
-	// screen sizes: 2 = distance, 0 = x size in real dimension, 1 = y size in real dimension
-	sc->screen_s[2] = 1;
-	sc->screen_s[0] = tan(sc->fov / 2 * PI_R) * sc->screen_s[2];
-	sc->screen_s[1] = sc->screen_s[0] / (float) sc->res[0] * sc->res[1];
+	static t_cam	actual_ca;
 
+	ca = &actual_ca;
+	// actual camera sensor resolution;
+	ca->res[0] = WIDTH / 4;
+	ca->res[1] = HEIGHT / 4;
+
+	// pixel we are working on
+	ca->pixel[0] = -1;
+	ca->pixel[1] = -1;
+
+	// camera max view distance 
+	ca->max_depth = 10;
+
+	//fov angle
+	ca->fov = 90;
+
+	// camera position xyz
+	ca->cam_p[0] = 1;
+	ca->cam_p[1] = 1;
+	ca->cam_p[2] = -5;
+
+	// camera vector direction xyz
+	// NOT IN USE
+	ca->cam_v[0] = 0;
+	ca->cam_v[1] = 0;
+	ca->cam_v[2] = 1;
+
+	// camera angles in degrees 
+	ca->cam_a[0] = 0;
+	ca->cam_a[1] = 0;
+	ca->cam_a[2] = 0;
+
+	// screen sizes: 2 = distance, 0 = x size in real dimension, 1 = y size in real dimension
+	ca->screen_s[2] = 1;
+	ca->screen_s[0] = tan(ca->fov / 2 * PI_R) * ca->screen_s[2];
+	ca->screen_s[1] = ca->screen_s[0] / (float) ca->res[0] * ca->res[1];
+	return(ca);
+}
+
+void	*pix_data_init(t_pix *px)
+{
+	static t_pix	actual_px;
+
+	px = &actual_px;
+	// point of origin of the ray
+	px->ray_p[0] = 0;
+	px->ray_p[1] = 0;
+	px->ray_p[2] = 0;
+
+	// vector of  the ray
+	px->ray_v[0] = 0;
+	px->ray_v[1] = 0;
+	px->ray_v[2] = 0;
+
+	// point of intersection with an obj
+	px->int_p[0] = 0;
+	px->int_p[1] = 0;
+	px->int_p[2] = 0;
+
+	// Normal of point of intersection
+	px->int_n[0] = 0;
+	px->int_n[1] = 0;
+	px->int_n[2] = 0;
+
+	// Vector from light to point
+	px->lig_v[0] = 0;
+	px->lig_v[1] = 0;
+	px->lig_v[2] = 0;
+	return (px);
 }
 
 t_scn	*scn_data_init(t_scn *sc)
@@ -65,25 +130,6 @@ t_scn	*scn_data_init(t_scn *sc)
 	static t_scn	actual_sc;
 
 	sc = &actual_sc;
-	// max_depth
-	sc->max_depth = 10;
-
-	//camera position
-	sc->cam_p[0] = 1;
-	sc->cam_p[1] = 1;
-	sc->cam_p[2] = -5;
-
-	// camera startingdirection
-	// NOT IN USE
-	sc->cam_v[0] = 0;
-	sc->cam_v[1] = 0;
-	sc->cam_v[2] = 1;
-
-	// camera angles 
-	sc->cam_a[0] = 0;
-	sc->cam_a[1] = 0;
-	sc->cam_a[2] = 0;
-
 	// sphere data
 	sc->sphere[0] = 2;
 	sc->sphere[1] = 2;
@@ -101,7 +147,7 @@ t_scn	*scn_data_init(t_scn *sc)
 	sc->y_sphere[3] = 0.2;
 
 	sc->z_sphere[0] = 0;
-	sc->z_sphere[1] = 0;
+	sc->z_sphere[1] = 0; 
 	sc->z_sphere[2] = 2;
 	sc->z_sphere[3] = 0.2;
 
@@ -110,14 +156,9 @@ t_scn	*scn_data_init(t_scn *sc)
 	sc->a_sphere[2] = 0;
 	sc->a_sphere[3] = 0.2;
 
-	//fov angle
-	sc->fov = 90;
-
-	// actual screen resolution;
-	sc->res[0] = WIDTH / 4;
-	sc->res[1] = HEIGHT / 4;
-	update_screen(sc);
-	
+	sc->light[0] = 2;
+	sc->light[1] = 2;
+	sc->light[2] = -2;
 	return (sc);
 }
 
@@ -130,11 +171,15 @@ t_data	*init_data(t_data *dt)
 	static t_cfg		*cf;
 	static t_str		*st;
 	static t_scn		*sc;
+	static t_cam		*ca;
+	static t_pix		*px;
 
 	dt = &actual_dt;
 	// dt->md = mlx_data_init_return(md);
 	dt->cf = cfg_data_init(cf);
 	dt->st = str_data_init(st);
 	dt->sc = scn_data_init(sc);
+	dt->ca = cam_data_init(ca);
+	dt->px = pix_data_init(px);
 	return (dt);
 }

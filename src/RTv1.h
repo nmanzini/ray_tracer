@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/20 18:27:31 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/21 14:47:38 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 
 # define PI_R		3.14142/180
 
-# define WIDTH		1024
-# define HEIGHT		1024
+# define WIDTH		512
+# define HEIGHT		512
 
 typedef struct		s_image_struct
 {
@@ -53,27 +53,36 @@ typedef struct		s_cfg_struct
 	int				cfgs;
 }					t_cfg;
 
-typedef struct		s_scn_struct
+typedef struct		s_cam_struct
 {
+	int				res[2];
+	int				pixel[2];
 	int				max_depth;
+	float			fov;
 	float			cam_p[3];
 	float			cam_v[3];
 	float			cam_a[3];
+	float			screen_s[3];
+}					t_cam;
+
+typedef struct		s_pix_struct
+{
+	float			ray_p[3];
 	float			ray_v[3];
+	float			int_p[3];
+	float			int_n[3];
+	float			lig_v[3];
+}					t_pix;
+
+typedef struct		s_scn_struct
+{
 	float			sphere[4];
 	float			x_sphere[4];
 	float			y_sphere[4];
 	float			z_sphere[4];
 	float			a_sphere[4];
-	float			screen_s[3];
-	float			fov;
-	int				res[2];
+	float			light[3];
 }					t_scn;
-
-typedef struct 		s_scr_struct
-{
-	
-}					t_scr;
 
 typedef struct		s_data_struct
 {
@@ -81,7 +90,8 @@ typedef struct		s_data_struct
 	t_str			*st;
 	t_mlx			*md;
 	t_scn			*sc;
-	char			*name;
+	t_cam			*ca;
+	t_pix			*px;
 }					t_data;
 
 # define BLACK		0x00000000

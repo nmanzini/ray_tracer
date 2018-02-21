@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/20 19:00:03 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/21 15:23:11 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,41 +47,41 @@ void	ray(t_data	*dt)
 	int		i;
 	int		j;
 	float	ray[3];
-	float		t;
+	float	t;
 
-	update_screen(dt->sc);
+	// update_screen(dt->sc);
 	i = -1;
-	while (++i < dt->sc->res[1])
+	while (++i < dt->ca->res[1])
 	{
 		j = -1;
-		while (++j < dt->sc->res[0])
+		while (++j < dt->ca->res[0])
 		{
-			ray[0] = - (dt->sc->screen_s[0] / 2) + dt->sc->screen_s[0] / (dt->sc->res[0] - 1) * j;
-			ray[1] = (dt->sc->screen_s[1] / 2) - dt->sc->screen_s[1] / (dt->sc->res[1] - 1) * i;
-			ray[2] = dt->sc->screen_s[2];
+			ray[0] = - (dt->ca->screen_s[0] / 2) + dt->ca->screen_s[0] / (dt->ca->res[0] - 1) * j;
+			ray[1] = (dt->ca->screen_s[1] / 2) - dt->ca->screen_s[1] / (dt->ca->res[1] - 1) * i;
+			ray[2] = dt->ca->screen_s[2];
 			// normalize (ray);
-			rotate_v(ray, dt->sc->cam_a);
+			rotate_v(ray, dt->ca->cam_a);
 
 			t = 0;
 
-			while (t < dt->sc->max_depth)
+			while (t < dt->ca->max_depth)
 			{
-				if (ray_sphere(ray,dt->sc->cam_p,dt->sc->x_sphere, t))
+				if (ray_sphere(ray,dt->ca->cam_p,dt->sc->x_sphere, t))
 				{
 					fill_pixel_res(dt,j,i,RED);
 					break;
 				}
-				else if (ray_sphere(ray,dt->sc->cam_p,dt->sc->y_sphere, t))
+				else if (ray_sphere(ray,dt->ca->cam_p,dt->sc->y_sphere, t))
 				{
 					fill_pixel_res(dt,j,i,GREEN);
 					break;
 				}
-				else if (ray_sphere(ray,dt->sc->cam_p,dt->sc->z_sphere, t))
+				else if (ray_sphere(ray,dt->ca->cam_p,dt->sc->z_sphere, t))
 				{
 					fill_pixel_res(dt,j,i,BLUE);
 					break;
 				}
-				else if (ray_sphere(ray,dt->sc->cam_p,dt->sc->a_sphere, t))
+				else if (ray_sphere(ray,dt->ca->cam_p,dt->sc->a_sphere, t))
 				{
 					fill_pixel_res(dt,j,i,WHITE);
 					break;
@@ -93,6 +93,7 @@ void	ray(t_data	*dt)
 		// printf("\n");
 	}
 }
+
 
 int	ray_sphere(float *vec, float *pos, float *sphere, float	t)
 {
@@ -158,6 +159,9 @@ void	rotate_v(float *vec,float *angles)
 
 // TODO:
 // improve the camera movements to follow the camera orientation
+// rayflow
+// 	-	for each pixel i create a ray and store it in ray
+// 	-	the ray has to look trough all the obj
 
 
 
@@ -170,10 +174,8 @@ int		main(int ac, char **av)
 	dt = init_data(dt);
 	dt->md = mlx_data_init_return(md);
 
-	// img_square(dt->md, BLUE);
+	img_square(dt->md, BLUE);
 
-
-	print_vector(dt->sc->screen_s, "screen_s\n");
 
 	display(dt);
 	mlx_key_hook(dt->md->win, call_keys, dt);
