@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/21 15:23:11 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/21 19:14:38 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,57 +40,118 @@ void	normalize(float *vec)
 	vec[2] /= len;
 }
 
+void	update_ray(int *res, int *pixel, float *scr_s, float *ray)
+{	
+	ray[0] = - (scr_s[0] / 2) + (scr_s[0] / (res[0] - 1) * pixel[0]);
+	ray[1] = + (scr_s[1] / 2) - (scr_s[1] / (res[1] - 1) * pixel[1]);
+	ray[2] = + (scr_s[2]);
+}
 
-
-void	ray(t_data	*dt)
+void	update_intersection(float t, float *ray_v, float *cam_p, float *int_p)
 {
-	int		i;
-	int		j;
-	float	ray[3];
-	float	t;
+	int_p[0] = cam_p[0] + t * ray_v[0];
+	int_p[1] = cam_p[1] + t * ray_v[1];
+	int_p[2] = cam_p[2] + t * ray_v[2];
+}
 
-	// update_screen(dt->sc);
-	i = -1;
-	while (++i < dt->ca->res[1])
+void	update_normal(float *int_p, float *cent, float *int_n)
+{
+	int_n[0] = int_p[0] - cent[0];
+	int_n[1] = int_p[1] - cent[1];
+	int_n[2] = int_p[2] - cent[2];
+}
+
+void	update_lig_v(float *lig_p, float *int_p, float *lig_v)
+{
+	lig_v[0] = lig_p[0] - int_p[0];
+	lig_v[1] = lig_p[1] - int_p[1];
+	lig_v[2] = lig_p[2] - int_p[2];
+}
+
+void	update_color(float *int_n, float *lig_v, unsigned int *color)
+{
+	float			projection;
+
+	projection = int_n[0] * lig_v [0] + int_n[1] * lig_v [1] + int_n[2] * lig_v [2];
+
+	*color = (projection + 1) / 2 * 255;
+
+}
+
+void ray_trace(t_data	*dt)
+{
+	float			ray[3];
+	float			t;
+
+	cam_data_update(dt->ca);
+	dt->px->pix_p[1] = -1;
+	while (++dt->px->pix_p[1] < dt->ca->res[1])
 	{
-		j = -1;
-		while (++j < dt->ca->res[0])
+		dt->px->pix_p[0] = -1;
+		while (++dt->px->pix_p[0] < dt->ca->res[0])
 		{
-			ray[0] = - (dt->ca->screen_s[0] / 2) + dt->ca->screen_s[0] / (dt->ca->res[0] - 1) * j;
-			ray[1] = (dt->ca->screen_s[1] / 2) - dt->ca->screen_s[1] / (dt->ca->res[1] - 1) * i;
-			ray[2] = dt->ca->screen_s[2];
-			// normalize (ray);
-			rotate_v(ray, dt->ca->cam_a);
+			update_ray(dt->ca->res,dt->px->pix_p,dt->ca->scr_s,dt->px->ray_v);
+			// normalize (dt->px->ray_v);
+			rotate_v(dt->px->ray_v, dt->ca->cam_a);
 
 			t = 0;
 
 			while (t < dt->ca->max_depth)
 			{
-				if (ray_sphere(ray,dt->ca->cam_p,dt->sc->x_sphere, t))
+				if (ray_sphere(dt->px->ray_v,dt->ca->cam_p,dt->sc->x_sphere, t))
 				{
-					fill_pixel_res(dt,j,i,RED);
+					update_intersection(t, dt->px->ray_v, dt->ca->cam_p, dt->px->int_p);
+					update_normal(dt->px->int_p, dt->sc->x_sphere, dt->px->int_n);
+					update_lig_v(dt->sc->light,dt->px->int_p,dt->px->lig_v);
+					update_color(dt->px->int_n,dt->px->lig_v,&dt->px->color);
+					fill_pixel_res(dt,dt->px->pix_p[0],dt->px->pix_p[1],dt->px->color);
 					break;
 				}
-				else if (ray_sphere(ray,dt->ca->cam_p,dt->sc->y_sphere, t))
+				else if (ray_sphere(dt->px->ray_v,dt->ca->cam_p,dt->sc->y_sphere, t))
 				{
-					fill_pixel_res(dt,j,i,GREEN);
+					update_intersection(t, dt->px->ray_v, dt->ca->cam_p, dt->px->int_p);
+					update_normal(dt->px->int_p, dt->sc->y_sphere, dt->px->int_n);
+					update_lig_v(dt->sc->light,dt->px->int_p,dt->px->lig_v);
+					update_color(dt->px->int_n,dt->px->lig_v,&dt->px->color);
+					fill_pixel_res(dt,dt->px->pix_p[0],dt->px->pix_p[1],dt->px->color);
 					break;
 				}
-				else if (ray_sphere(ray,dt->ca->cam_p,dt->sc->z_sphere, t))
+				else if (ray_sphere(dt->px->ray_v,dt->ca->cam_p,dt->sc->z_sphere, t))
 				{
-					fill_pixel_res(dt,j,i,BLUE);
+					update_intersection(t, dt->px->ray_v, dt->ca->cam_p, dt->px->int_p);
+					update_normal(dt->px->int_p, dt->sc->z_sphere, dt->px->int_n);
+					update_lig_v(dt->sc->light,dt->px->int_p,dt->px->lig_v);
+					update_color(dt->px->int_n,dt->px->lig_v,&dt->px->color);
+					fill_pixel_res(dt,dt->px->pix_p[0],dt->px->pix_p[1],dt->px->color);
 					break;
 				}
-				else if (ray_sphere(ray,dt->ca->cam_p,dt->sc->a_sphere, t))
+				else if (ray_sphere(dt->px->ray_v,dt->ca->cam_p,dt->sc->a_sphere, t))
 				{
-					fill_pixel_res(dt,j,i,WHITE);
+					update_intersection(t, dt->px->ray_v, dt->ca->cam_p, dt->px->int_p);
+					update_normal(dt->px->int_p, dt->sc->a_sphere, dt->px->int_n);
+					update_lig_v(dt->sc->light,dt->px->int_p,dt->px->lig_v);
+					update_color(dt->px->int_n,dt->px->lig_v,&dt->px->color);
+					fill_pixel_res(dt,dt->px->pix_p[0],dt->px->pix_p[1],dt->px->color);
 					break;
 				}
-				t += 0.1;
+				// else if (ray_sphere(dt->px->ray_v,dt->ca->cam_p,dt->sc->y_sphere, t))
+				// {
+				// 	fill_pixel_res(dt,dt->px->pix_p[0],dt->px->pix_p[1],GREEN);
+				// 	break;
+				// }
+				// else if (ray_sphere(dt->px->ray_v,dt->ca->cam_p,dt->sc->z_sphere, t))
+				// {
+				// 	fill_pixel_res(dt,dt->px->pix_p[0],dt->px->pix_p[1],BLUE);
+				// 	break;
+				// }
+				// else if (ray_sphere(dt->px->ray_v,dt->ca->cam_p,dt->sc->a_sphere, t))
+				// {
+				// 	fill_pixel_res(dt,dt->px->pix_p[0],dt->px->pix_p[1],WHITE);
+				// 	break;
+				// }
+				t += 0.05;
 			}
-			// print_vector(ray,ft_strjoin(ft_itoa(j),ft_itoa(i)));
 		}
-		// printf("\n");
 	}
 }
 
@@ -161,7 +222,9 @@ void	rotate_v(float *vec,float *angles)
 // improve the camera movements to follow the camera orientation
 // rayflow
 // 	-	for each pixel i create a ray and store it in ray
-// 	-	the ray has to look trough all the obj
+// 	-	get the normal
+// 	-	get the light vector
+// the color is 255 - arcos (dot product norm and light)
 
 
 

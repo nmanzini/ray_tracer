@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/21 15:13:27 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/21 19:12:32 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,21 +51,25 @@ t_str	*str_data_init(t_str *st)
 	return (st);
 }
 
+void	cam_data_update(t_cam *ca)
+{
+	// screen sizes: 2 = distance, 0 = x size in real dimension, 1 = y size in real dimension
+	ca->scr_s[2] = 1;
+	ca->scr_s[0] = tan(ca->fov / 2 * PI_R) * ca->scr_s[2];
+	ca->scr_s[1] = ca->scr_s[0] / (float) ca->res[0] * ca->res[1];
+}
+
 void	*cam_data_init(t_cam *ca)
 {
 	static t_cam	actual_ca;
 
 	ca = &actual_ca;
+
+	ca->max_depth = 10;
+
 	// actual camera sensor resolution;
 	ca->res[0] = WIDTH / 4;
 	ca->res[1] = HEIGHT / 4;
-
-	// pixel we are working on
-	ca->pixel[0] = -1;
-	ca->pixel[1] = -1;
-
-	// camera max view distance 
-	ca->max_depth = 10;
 
 	//fov angle
 	ca->fov = 90;
@@ -86,10 +90,8 @@ void	*cam_data_init(t_cam *ca)
 	ca->cam_a[1] = 0;
 	ca->cam_a[2] = 0;
 
-	// screen sizes: 2 = distance, 0 = x size in real dimension, 1 = y size in real dimension
-	ca->screen_s[2] = 1;
-	ca->screen_s[0] = tan(ca->fov / 2 * PI_R) * ca->screen_s[2];
-	ca->screen_s[1] = ca->screen_s[0] / (float) ca->res[0] * ca->res[1];
+	cam_data_update(ca);
+
 	return(ca);
 }
 
@@ -158,7 +160,7 @@ t_scn	*scn_data_init(t_scn *sc)
 
 	sc->light[0] = 2;
 	sc->light[1] = 2;
-	sc->light[2] = -2;
+	sc->light[2] = 1;
 	return (sc);
 }
 

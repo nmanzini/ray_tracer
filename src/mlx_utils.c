@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:21:46 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/21 14:56:37 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/21 15:31:57 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,6 @@ void	make_image(t_mlx *md)
 void	display(t_data	*dt)
 {
 	img_square(dt->md,BLACK);
-	ray(dt);
+	ray_trace(dt);
 	mlx_put_image_to_window(dt->md->mlx,dt-> md->win, dt->md->ip->image, 0, 0);
 }

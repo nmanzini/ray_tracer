@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/21 14:47:38 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/21 18:54:32 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,22 +56,26 @@ typedef struct		s_cfg_struct
 typedef struct		s_cam_struct
 {
 	int				res[2];
-	int				pixel[2];
 	int				max_depth;
 	float			fov;
 	float			cam_p[3];
 	float			cam_v[3];
 	float			cam_a[3];
-	float			screen_s[3];
+	float			scr_s[3];
 }					t_cam;
 
 typedef struct		s_pix_struct
 {
+	int				pix_p[2];
+
 	float			ray_p[3];
 	float			ray_v[3];
+
 	float			int_p[3];
 	float			int_n[3];
+
 	float			lig_v[3];
+	unsigned int	color;
 }					t_pix;
 
 typedef struct		s_scn_struct
@@ -81,6 +85,7 @@ typedef struct		s_scn_struct
 	float			y_sphere[4];
 	float			z_sphere[4];
 	float			a_sphere[4];
+	float			*spheres[4];
 	float			light[3];
 }					t_scn;
 
@@ -104,7 +109,7 @@ typedef struct		s_data_struct
 /*
 ** main.c
 */
-void				ray(t_data	*dt);
+void	ray_trace(t_data	*dt);
 float				float_abs(float f);
 int					read_input(t_data *dt, int ac, char **av);
 int					motion_function(int x, int y, t_data *dt);
@@ -115,7 +120,7 @@ t_mlx				*mlx_data_init_return(t_mlx *md);
 void				cfg_setup(t_cfg *cf);
 t_cfg				*cfg_data_init(t_cfg *cf);
 t_data				*init_data(t_data *dt);
-void	update_screen(t_scn *sc);
+void	cam_data_update(t_cam *ca);
 /*
 ** call_keys_general.c
 */
