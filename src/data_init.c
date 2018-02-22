@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/22 10:53:32 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/22 14:35:15 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,11 @@ void	*cam_data_init(t_cam *ca)
 
 	ca = &actual_ca;
 
-	ca->max_depth = 10;
+	ca->max_depth = 20;
 
 	// actual camera sensor resolution;
-	ca->res[0] = WIDTH / 4;
-	ca->res[1] = HEIGHT / 4;
+	ca->res[0] = WIDTH / 8;
+	ca->res[1] = HEIGHT / 8;
 
 	//fov angle
 	ca->fov = 90;
@@ -158,9 +158,23 @@ t_scn	*scn_data_init(t_scn *sc)
 	sc->a_sphere[2] = 0;
 	sc->a_sphere[3] = 0.2;
 
+	sc->plane[0] = 2;
+	sc->plane[1] = 5;
+
+	sc->plane2[0] = 1;
+	sc->plane2[1] = -1;
+
 	sc->light[0] = 2;
 	sc->light[1] = 2;
 	sc->light[2] = -1;
+	sc->light[2] = 0.1;
+
+	sc->box[0] = 2;
+	sc->box[1] = 2;
+	sc->box[2] = 1;
+	sc->box[3] = 1;
+	sc->box[4] = 0.5;
+	sc->box[5] = 2;
 	return (sc);
 }
 

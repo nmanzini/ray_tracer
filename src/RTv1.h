@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/22 10:40:01 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/22 14:44:56 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,10 @@ typedef struct		s_scn_struct
 	float			z_sphere[4];
 	float			a_sphere[4];
 	float			*spheres[4];
-	float			light[3];
+	float			light[4];
+	float			plane[2];
+	float			plane2[2];
+	float			box[6];
 }					t_scn;
 
 typedef struct		s_data_struct
@@ -145,7 +148,8 @@ unsigned int		rgb(int red, int green, int blue);
 void				fractal_color(t_data *dt, int x, int y, int iter);
 
 void	rotate_v(float *vec,float *angles);
-int	ray_sphere(float *vec, float *pos, float *sphere, float	t);
+int	ray_plane(float *plane, float	*int_p);
+int	ray_sphere(float *sphere, float *int_p);
 
 
 #endif
