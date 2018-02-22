@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/21 18:54:32 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/22 10:40:01 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 
 # define PI_R		3.14142/180
 
-# define WIDTH		512
-# define HEIGHT		512
+# define WIDTH		800
+# define HEIGHT		800
 
 typedef struct		s_image_struct
 {

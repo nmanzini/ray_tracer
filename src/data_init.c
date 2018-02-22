@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/21 19:12:32 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/22 10:53:32 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,7 +160,7 @@ t_scn	*scn_data_init(t_scn *sc)
 
 	sc->light[0] = 2;
 	sc->light[1] = 2;
-	sc->light[2] = 1;
+	sc->light[2] = -1;
 	return (sc);
 }
 

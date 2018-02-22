@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/21 19:14:38 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/22 10:58:10 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ void	update_ray(int *res, int *pixel, float *scr_s, float *ray)
 	ray[0] = - (scr_s[0] / 2) + (scr_s[0] / (res[0] - 1) * pixel[0]);
 	ray[1] = + (scr_s[1] / 2) - (scr_s[1] / (res[1] - 1) * pixel[1]);
 	ray[2] = + (scr_s[2]);
+	normalize (ray);
 }
 
 void	update_intersection(float t, float *ray_v, float *cam_p, float *int_p)
@@ -59,6 +60,7 @@ void	update_normal(float *int_p, float *cent, float *int_n)
 	int_n[0] = int_p[0] - cent[0];
 	int_n[1] = int_p[1] - cent[1];
 	int_n[2] = int_p[2] - cent[2];
+	normalize (int_n);
 }
 
 void	update_lig_v(float *lig_p, float *int_p, float *lig_v)
@@ -66,16 +68,19 @@ void	update_lig_v(float *lig_p, float *int_p, float *lig_v)
 	lig_v[0] = lig_p[0] - int_p[0];
 	lig_v[1] = lig_p[1] - int_p[1];
 	lig_v[2] = lig_p[2] - int_p[2];
+	normalize (lig_v);
 }
 
 void	update_color(float *int_n, float *lig_v, unsigned int *color)
 {
 	float			projection;
+	unsigned int	range;
 
 	projection = int_n[0] * lig_v [0] + int_n[1] * lig_v [1] + int_n[2] * lig_v [2];
 
-	*color = (projection + 1) / 2 * 255;
+	range = (projection + 1) / 2 * 256;
 
+	*color = range + range * 256 + range * 256 * 256;
 }
 
 void ray_trace(t_data	*dt)
@@ -91,7 +96,7 @@ void ray_trace(t_data	*dt)
 		while (++dt->px->pix_p[0] < dt->ca->res[0])
 		{
 			update_ray(dt->ca->res,dt->px->pix_p,dt->ca->scr_s,dt->px->ray_v);
-			// normalize (dt->px->ray_v);
+			
 			rotate_v(dt->px->ray_v, dt->ca->cam_a);
 
 			t = 0;
