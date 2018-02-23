@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/22 19:23:10 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/23 17:44:11 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,10 +109,30 @@ void	update_color(t_pv *enc, t_pv *lig, unsigned int *color)
 {
 	float			projection;
 	unsigned int	range;
+	int				cheker;
 
 	projection = enc->v[0] * lig->v[0] + enc->v[1] * lig->v[1] + enc->v[2] * lig->v[2];
-	range = (projection + 1) / 2 * 256;
-	*color = range + range * 256 + range * 256 * 256;
+
+	cheker = 0;
+
+	if (cheker)
+	{
+		if ((int)enc->p[0] % 2 >= 1 || (int)enc->p[2] % 2 >= 1)
+		{
+			range = (projection + 1) / 2 * 256;
+			*color = range + range * 256 + range * 256 * 256;
+		}
+		else
+		{
+			range = (projection + 1) / 2 * 128;
+			*color = range + range * 256 + range * 256 * 256;
+		}
+	}
+	else
+	{
+		range = (projection + 1) / 2 * 256;
+		*color = range + range * 256 + range * 256 * 256;
+	}
 }
 
 void ray_trace(t_data	*dt)
@@ -134,26 +154,139 @@ void ray_trace(t_data	*dt)
 			update_ray_v(dt->ca->res,dt->px->pix_p,dt->ca->scr_s,dt->px->ray);
 			rotate_v(dt->px->ray->v, dt->ca->cam_a);
 
-			if (ray_plane_encounter(dt->sc->plane,dt->px->ray, dt->px->enc))
+			if (ray_sphere_encounter(dt->sc->sphere, dt->px->ray, dt->px->enc))
 			{
 				update_light_v(dt->px->enc, dt->px->lig);
 				update_color(dt->px->enc, dt->px->lig, &dt->px->color);
 				fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
 			}
+
+			// if (ray_surface_encounter(dt->sc->surface,dt->px->ray, dt->px->enc))
+			// {
+			// 	update_light_v(dt->px->enc, dt->px->lig);
+			// 	update_color(dt->px->enc, dt->px->lig, &dt->px->color);
+			// 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
+			// }
+			// if (ray_plane_encounter(dt->sc->plane,dt->px->ray, dt->px->enc))
+			// {
+			// 	update_light_v(dt->px->enc, dt->px->lig);
+			// 	update_color(dt->px->enc, dt->px->lig, &dt->px->color);
+			// 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
+			// }
 		}
 	}
 }
 
+float	ray_sphere_encounter(float *sphere, t_pv *ray, t_pv *enc)
+{
+	int			i;
+	float		A;
+	float		B;
+	float		C;
+	float		det;
+	float		b_vec[3];
+	float		length;
+	float		t[2];
+	float		dist;
+
+	A = 1;
+	// b= 2 * ray_v * (ray_p − sphere_p)
+	i = -1;
+	while(++i < 3)
+		b_vec[i] = ray->v[i] * (ray->p[i] - sphere [i]);
+
+	B = 2 * (b_vec[0] + b_vec[1] + b_vec[2]);
+	// c=|ray_origin - center|^2 − Radius ^2 
+	length = pow(ray->p[0] - sphere[0],2) +
+				pow(ray->p[1] - sphere[1],2) +
+				pow(ray->p[2] - sphere[2],2);
+	C = length - pow(sphere[3],2);
+	det = pow(B,2) - 4 * A * C;
+
+	if (det < 0)
+		return(0);	
+	else if (det == 0)
+	{
+		dist = - B / (2 * A);
+		if (dist < 0)
+			return(0);
+	}
+	else
+	{
+		t[0] = (- B - sqrt(det)) / (2 * A);
+		t[1] = (- B + sqrt(det)) / (2 * A);
+		if (t[0] < t[1] && t[0] > 0)
+			dist = t[0];
+		else if (t[1] < t[0] && t[1] > 0)
+			dist = t[1];
+		else
+			return(0);
+	}
+
+	enc->p[0] = ray->p[0] + dist * ray->v[0];
+	enc->p[1] = ray->p[1] + dist * ray->v[1];
+	enc->p[2] = ray->p[2] + dist * ray->v[2];
+
+	enc->v[0] = enc->p[0] - sphere[0];
+	enc->v[1] = enc->p[1] - sphere[1];
+	enc->v[2] = enc->p[2] - sphere[2];
+	normalize(enc->v);
+
+	return (1);
+}
+
+
+int	ray_surface_encounter(float *surface, t_pv *ray, t_pv *enc)
+{
+	int 	axis;
+	float	t;
+	int		i;
+
+	i = -1;
+	while(++i < 3)
+		if (surface[i + 3] == 0)
+			axis = i;
+
+	if (ray->v[axis] != 0)
+		// ray->v[axis] * t + ray->p[axis] = plane[1]
+		t  = (surface[axis] - ray->p[axis]) / ray->v[axis];
+	else
+		return (0);
+	if (t > 0)
+	{
+		enc->p[0] = ray->p[0] + t * ray->v[0];
+		enc->p[1] = ray->p[1] + t * ray->v[1];
+		enc->p[2] = ray->p[2] + t * ray->v[2];
+
+		enc->v[0] = 0;
+		enc->v[1] = 0;
+		enc->v[2] = 0;
+		enc->v[axis] = 1;
+
+		i = -1;
+		while(++i < 3)
+			if (i != axis)
+			{
+				if (!(enc->p[i] <= surface[i] + surface[i + 3] && enc->p[i] >= surface[i] - surface[i + 3]))
+					return (0);
+			}
+		return (1);
+	}
+	return (0);
+}
 
 int	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc)
 {
 	int 	axis;
 	float	t;
 
-	axis = 0;
-	if (ray->v[(int)plane[0]] != 0)
-		t  = ((int)plane[1] - ray->p[(int)plane[0]]) / ray->v[(int)plane[0]];
-	if (t >= 0)
+	axis = (int)plane[0];
+	if (ray->v[axis] != 0)
+		// ray->v[axis] * t + ray->p[axis] = plane[1]
+		t  = (plane[1] - ray->p[axis]) / ray->v[axis];
+	else
+		return (0);
+	if (t > 0)
 	{
 		enc->p[0] = ray->p[0] + t * ray->v[0];
 		enc->p[1] = ray->p[1] + t * ray->v[1];
@@ -163,7 +296,7 @@ int	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc)
 		enc->v[1] = 0;
 		enc->v[2] = 0;
 		enc->v[(int)plane[0]] = 1;
-		return (t);
+		return (1);
 	}
 	return (0);
 }

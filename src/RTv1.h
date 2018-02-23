@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/22 18:47:12 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/23 16:39:52 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 
 # define PI_R		3.14142/180
 
-# define WIDTH		800
-# define HEIGHT		800
+# define WIDTH		1024
+# define HEIGHT		1024
 
 typedef struct		s_point_vector
 {
@@ -99,6 +99,7 @@ typedef struct		s_scn_struct
 	float			plane[2];
 	float			plane2[2];
 	float			box[6];
+	float			surface[6];
 }					t_scn;
 
 typedef struct		s_data_struct
@@ -158,6 +159,8 @@ void				fractal_color(t_data *dt, int x, int y, int iter);
 
 void	rotate_v(float *vec,float *angles);
 int	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc);
+int	ray_surface_encounter(float *surface, t_pv *ray, t_pv *enc);
+float	ray_sphere_encounter(float *surface, t_pv *ray, t_pv *enc);
 
 
 #endif

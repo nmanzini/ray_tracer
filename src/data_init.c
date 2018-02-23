@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/22 19:20:38 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/23 17:10:40 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,16 +68,16 @@ void	*cam_data_init(t_cam *ca)
 	ca->max_depth = 20;
 
 	// actual camera sensor resolution;
-	ca->res[0] = WIDTH / 4;
-	ca->res[1] = HEIGHT / 4;
+	ca->res[0] = WIDTH / 2;
+	ca->res[1] = HEIGHT / 2;
 
 	//fov angle
 	ca->fov = 90;
 
 	// camera position xyz
 	ca->cam_p[0] = 0;
-	ca->cam_p[1] = 0;
-	ca->cam_p[2] = 0;
+	ca->cam_p[1] = 2;
+	ca->cam_p[2] = -7;
 
 	// camera vector direction xyz
 	// NOT IN USE
@@ -138,9 +138,9 @@ void	*pix_data_init(t_pix *px)
 	px->enc->v[2] = 0;
 
 	// pointvector struct of the encounter
-	px->lig->p[0] = 0;
-	px->lig->p[1] = 0;
-	px->lig->p[2] = 0;
+	px->lig->p[0] = 5;
+	px->lig->p[1] = 5;
+	px->lig->p[2] = -5;
 
 	px->lig->v[0] = 0;
 	px->lig->v[1] = 0;
@@ -174,10 +174,10 @@ t_scn	*scn_data_init(t_scn *sc)
 
 	sc = &actual_sc;
 	// sphere data
-	sc->sphere[0] = 2;
-	sc->sphere[1] = 2;
-	sc->sphere[2] = 2;
-	sc->sphere[2] = 12;
+	sc->sphere[0] = 0;
+	sc->sphere[1] = 0;
+	sc->sphere[2] = 0;
+	sc->sphere[3] = 2;
 
 	sc->x_sphere[0] = 2;
 	sc->x_sphere[1] = 0;
@@ -215,6 +215,13 @@ t_scn	*scn_data_init(t_scn *sc)
 	sc->box[3] = 1;
 	sc->box[4] = 0.5;
 	sc->box[5] = 2;
+
+	sc->surface[0] = 3.5;
+	sc->surface[1] = 0;
+	sc->surface[2] = 5.5;
+	sc->surface[3] = 3;
+	sc->surface[4] = 0;
+	sc->surface[5] = 5;
 	return (sc);
 }
 
