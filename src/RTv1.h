@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RTv1.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/23 16:39:52 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/28 00:27:34 by nicola           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,11 @@
 
 # define PI_R		3.14142/180
 
+# define MAX(x, y) (((x) > (y)) ? (x) : (y))
+# define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
 # define WIDTH		1024
-# define HEIGHT		1024
+# define HEIGHT		512
 
 typedef struct		s_point_vector
 {
@@ -161,6 +164,7 @@ void	rotate_v(float *vec,float *angles);
 int	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc);
 int	ray_surface_encounter(float *surface, t_pv *ray, t_pv *enc);
 float	ray_sphere_encounter(float *surface, t_pv *ray, t_pv *enc);
+float	ray_box_encounter(float *box, t_pv *ray, t_pv *enc);
 
 
 #endif

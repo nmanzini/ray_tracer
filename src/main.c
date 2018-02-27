@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/23 17:44:11 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/28 00:26:35 by nicola           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,12 +63,12 @@ void	update_ray_v(int *res, int *pixel, float *scr_s, t_pv *ray)
 // 	int_p[2] = cam_p[2] + t * ray_v[2];
 // }
 
-// void	update_encounter_p(float t, t_pv *ray, t_pv *enc)
-// {
-// 	enc.p[0] = ray.p[0] + t * ray.v[0];
-// 	enc.p[1] = ray.p[1] + t * ray.v[1];
-// 	enc.p[2] = ray.p[2] + t * ray.v[2];
-// }
+void	update_encounter_p(float t, t_pv *ray, t_pv *enc)
+{
+	enc->p[0] = ray->p[0] + t * ray->v[0];
+	enc->p[1] = ray->p[1] + t * ray->v[1];
+	enc->p[2] = ray->p[2] + t * ray->v[2];
+}
 
 // void	update_sphere_normal_v(float *int_p, float *sphere_p, float *int_n)
 // {
@@ -153,13 +153,19 @@ void ray_trace(t_data	*dt)
 		{
 			update_ray_v(dt->ca->res,dt->px->pix_p,dt->ca->scr_s,dt->px->ray);
 			rotate_v(dt->px->ray->v, dt->ca->cam_a);
-
-			if (ray_sphere_encounter(dt->sc->sphere, dt->px->ray, dt->px->enc))
+			
+			if (ray_box_encounter(dt->sc->box, dt->px->ray, dt->px->enc))
 			{
 				update_light_v(dt->px->enc, dt->px->lig);
 				update_color(dt->px->enc, dt->px->lig, &dt->px->color);
 				fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
 			}
+			// if (ray_sphere_encounter(dt->sc->sphere, dt->px->ray, dt->px->enc))
+			// {
+			// 	update_light_v(dt->px->enc, dt->px->lig);
+			// 	update_color(dt->px->enc, dt->px->lig, &dt->px->color);
+			// 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
+			// }
 
 			// if (ray_surface_encounter(dt->sc->surface,dt->px->ray, dt->px->enc))
 			// {
@@ -177,30 +183,60 @@ void ray_trace(t_data	*dt)
 	}
 }
 
-float	ray_sphere_encounter(float *sphere, t_pv *ray, t_pv *enc)
+float	ray_box_encounter(float *box, t_pv *ray, t_pv *enc)
 {
-	int			i;
-	float		A;
-	float		B;
-	float		C;
-	float		det;
-	float		b_vec[3];
-	float		length;
-	float		t[2];
-	float		dist;
+	float t1[3];
+	float t2[3];
 
-	A = 1;
-	// b= 2 * ray_v * (ray_p − sphere_p)
+	float tmin = 0, tmax = INFINITY;
+	int i;
+	int axis;
+
 	i = -1;
-	while(++i < 3)
-		b_vec[i] = ray->v[i] * (ray->p[i] - sphere [i]);
+	enc->v[0] = 0;
+	enc->v[1] = 0;
+	enc->v[2] = 0;
 
-	B = 2 * (b_vec[0] + b_vec[1] + b_vec[2]);
-	// c=|ray_origin - center|^2 − Radius ^2 
-	length = pow(ray->p[0] - sphere[0],2) +
-				pow(ray->p[1] - sphere[1],2) +
-				pow(ray->p[2] - sphere[2],2);
-	C = length - pow(sphere[3],2);
+	while (++i<3)
+	{
+		if (ray->v[i] != 0.0) 
+		{
+			t1[i] = (box[i] - ray->p[i])/ray->v[i];
+			t2[i] = (box[i + 3] - ray->p[i])/ray->v[i];
+
+			if (tmin < MIN(t1[i], t2[i]))
+			{
+				if (t1[i] < t2[i])
+					axis = i + 1;
+				else
+					axis = -i - 1;
+			}
+			tmin = MAX(tmin, MIN(t1[i], t2[i]));
+			tmax = MIN(tmax, MAX(t1[i], t2[i]));
+		}
+	}
+	if (tmax >= tmin)
+	{
+		update_encounter_p(tmin, ray, enc);
+
+		if (axis > 0)
+			enc->v[axis -1] = - 1;
+		else 
+			enc->v [ - axis -1] = 1;
+		return (tmin);
+	}
+	else
+		return (0);
+
+
+}
+
+float	solve_quadratic(float A, float B, float C)
+{
+	float det;
+	float dist;
+	float t[2];
+
 	det = pow(B,2) - 4 * A * C;
 
 	if (det < 0)
@@ -220,19 +256,44 @@ float	ray_sphere_encounter(float *sphere, t_pv *ray, t_pv *enc)
 		else if (t[1] < t[0] && t[1] > 0)
 			dist = t[1];
 		else
-			return(0);
+			return(0); // should not exist
 	}
+	return (dist);
+}
 
-	enc->p[0] = ray->p[0] + dist * ray->v[0];
-	enc->p[1] = ray->p[1] + dist * ray->v[1];
-	enc->p[2] = ray->p[2] + dist * ray->v[2];
+float	ray_sphere_encounter(float *sphere, t_pv *ray, t_pv *enc)
+{
+	int			i;
+	float		A;
+	float		B;
+	float		C;
+	// float		det;
+	float		b_vec[3];
+	float		length;
+	float		t;
+
+	A = 1;
+	// b= 2 * ray_v * (ray_p − sphere_p)
+	i = -1;
+	while(++i < 3)
+		b_vec[i] = ray->v[i] * (ray->p[i] - sphere [i]);
+	B = 2 * (b_vec[0] + b_vec[1] + b_vec[2]);
+	// c=|ray_origin - center|^2 − Radius ^2 
+	length = pow(ray->p[0] - sphere[0],2) +
+				pow(ray->p[1] - sphere[1],2) +
+				pow(ray->p[2] - sphere[2],2);
+	C = length - pow(sphere[3],2);
+
+	t = solve_quadratic(A,B,C);
+	if (t == 0)
+		return(0);
+	update_encounter_p(t, ray, enc);
 
 	enc->v[0] = enc->p[0] - sphere[0];
 	enc->v[1] = enc->p[1] - sphere[1];
 	enc->v[2] = enc->p[2] - sphere[2];
 	normalize(enc->v);
-
-	return (1);
+	return (t);
 }
 
 
@@ -254,9 +315,11 @@ int	ray_surface_encounter(float *surface, t_pv *ray, t_pv *enc)
 		return (0);
 	if (t > 0)
 	{
-		enc->p[0] = ray->p[0] + t * ray->v[0];
-		enc->p[1] = ray->p[1] + t * ray->v[1];
-		enc->p[2] = ray->p[2] + t * ray->v[2];
+		// enc->p[0] = ray->p[0] + t * ray->v[0];
+		// enc->p[1] = ray->p[1] + t * ray->v[1];
+		// enc->p[2] = ray->p[2] + t * ray->v[2];
+
+		update_encounter_p(t, ray, enc);
 
 		enc->v[0] = 0;
 		enc->v[1] = 0;
@@ -288,9 +351,11 @@ int	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc)
 		return (0);
 	if (t > 0)
 	{
-		enc->p[0] = ray->p[0] + t * ray->v[0];
-		enc->p[1] = ray->p[1] + t * ray->v[1];
-		enc->p[2] = ray->p[2] + t * ray->v[2];
+		// enc->p[0] = ray->p[0] + t * ray->v[0];
+		// enc->p[1] = ray->p[1] + t * ray->v[1];
+		// enc->p[2] = ray->p[2] + t * ray->v[2];
+
+		update_encounter_p(t, ray, enc);
 
 		enc->v[0] = 0;
 		enc->v[1] = 0;

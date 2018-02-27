@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   data_init.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/23 17:10:40 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/02/27 23:58:36 by nicola           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,12 +209,12 @@ t_scn	*scn_data_init(t_scn *sc)
 	// sc->light[1] = 2;
 	// sc->light[2] = -1;
 
-	sc->box[0] = 2;
-	sc->box[1] = 2;
-	sc->box[2] = 1;
-	sc->box[3] = 1;
-	sc->box[4] = 0.5;
-	sc->box[5] = 2;
+	sc->box[0] = 0.0;
+	sc->box[1] = 0.0;
+	sc->box[2] = 0.0;
+	sc->box[3] = 1.0;
+	sc->box[4] = 2.0;
+	sc->box[5] = 3.0;
 
 	sc->surface[0] = 3.5;
 	sc->surface[1] = 0;
