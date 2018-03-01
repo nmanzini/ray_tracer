@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RTv1.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/28 00:27:34 by nicola           ###   ########.fr       */
+/*   Updated: 2018/03/01 15:16:35 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 # define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 # define WIDTH		1024
-# define HEIGHT		512
+# define HEIGHT		1024
 
 typedef struct		s_point_vector
 {
