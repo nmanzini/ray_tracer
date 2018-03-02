@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/03/01 15:16:35 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/03/02 15:06:08 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ typedef struct		s_scn_struct
 	float			plane2[2];
 	float			box[6];
 	float			surface[6];
+	t_pv			cone;
 }					t_scn;
 
 typedef struct		s_data_struct
@@ -160,11 +161,13 @@ void				img_square_dim(t_mlx *md, int *p1, int *p2,
 unsigned int		rgb(int red, int green, int blue);
 void				fractal_color(t_data *dt, int x, int y, int iter);
 
+float	solve_quadratic(float A, float B, float C);
 void	rotate_v(float *vec,float *angles);
 int	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc);
 int	ray_surface_encounter(float *surface, t_pv *ray, t_pv *enc);
 float	ray_sphere_encounter(float *surface, t_pv *ray, t_pv *enc);
 float	ray_box_encounter(float *box, t_pv *ray, t_pv *enc);
+float	ray_cone_encounter(t_pv cone, int angle, t_pv *ray, t_pv *enc);
 
 
 #endif

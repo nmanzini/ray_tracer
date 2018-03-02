@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   data_init.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/27 23:58:36 by nicola           ###   ########.fr       */
+/*   Updated: 2018/03/02 16:53:16 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,8 @@ void	*cam_data_init(t_cam *ca)
 
 	// camera position xyz
 	ca->cam_p[0] = 0;
-	ca->cam_p[1] = 2;
-	ca->cam_p[2] = -7;
+	ca->cam_p[1] = 0;
+	ca->cam_p[2] = -5;
 
 	// camera vector direction xyz
 	// NOT IN USE
@@ -139,8 +139,8 @@ void	*pix_data_init(t_pix *px)
 
 	// pointvector struct of the encounter
 	px->lig->p[0] = 5;
-	px->lig->p[1] = 5;
-	px->lig->p[2] = -5;
+	px->lig->p[1] = 0;
+	px->lig->p[2] = 0;
 
 	px->lig->v[0] = 0;
 	px->lig->v[1] = 0;
@@ -222,6 +222,13 @@ t_scn	*scn_data_init(t_scn *sc)
 	sc->surface[3] = 3;
 	sc->surface[4] = 0;
 	sc->surface[5] = 5;
+
+	sc->cone.p[0] = 0;
+	sc->cone.p[1] = 0;
+	sc->cone.p[2] = 0;
+	sc->cone.v[0] = 0;
+	sc->cone.v[1] = 1;
+	sc->cone.v[2] = 0;
 	return (sc);
 }
 

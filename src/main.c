@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/28 00:26:35 by nicola           ###   ########.fr       */
+/*   Updated: 2018/03/02 17:04:34 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,14 @@ void	normalize(float *vec)
 	float len;
 
 	len = sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
-	vec[0] /= len;
-	vec[1] /= len;
-	vec[2] /= len;
+	if (len != 1 && len != 0)
+	{
+		vec[0] /= len;
+		vec[1] /= len;
+		vec[2] /= len;
+	}
+	else
+		return;
 }
 
 void	update_ray_p(float *cam_p, t_pv *ray)
@@ -54,6 +59,19 @@ void	update_ray_v(int *res, int *pixel, float *scr_s, t_pv *ray)
 	ray->v[1] = + (scr_s[1] / 2) - (scr_s[1] / (res[1] - 1) * pixel[1]);
 	ray->v[2] = + (scr_s[2]);
 	normalize (ray->v);
+}
+
+float dot_prod(float *vec1, float *vec2)
+{
+	float	result;
+	int		i;
+
+	i = -1;
+	result = 0;
+
+	while (++i < 3)
+		result += vec1[i] * vec2[i];
+	return (result);
 }
 
 // void	update_intersection_p(float t, float *ray_v, float *cam_p, float *int_p)
@@ -154,12 +172,19 @@ void ray_trace(t_data	*dt)
 			update_ray_v(dt->ca->res,dt->px->pix_p,dt->ca->scr_s,dt->px->ray);
 			rotate_v(dt->px->ray->v, dt->ca->cam_a);
 			
-			if (ray_box_encounter(dt->sc->box, dt->px->ray, dt->px->enc))
+			if (ray_cone_encounter(dt->sc->cone, 25, dt->px->ray, dt->px->enc))
 			{
 				update_light_v(dt->px->enc, dt->px->lig);
 				update_color(dt->px->enc, dt->px->lig, &dt->px->color);
 				fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
 			}
+
+			// if (ray_box_encounter(dt->sc->box, dt->px->ray, dt->px->enc))
+			// {
+			// 	update_light_v(dt->px->enc, dt->px->lig);
+			// 	update_color(dt->px->enc, dt->px->lig, &dt->px->color);
+			// 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
+			// }
 			// if (ray_sphere_encounter(dt->sc->sphere, dt->px->ray, dt->px->enc))
 			// {
 			// 	update_light_v(dt->px->enc, dt->px->lig);
@@ -183,6 +208,92 @@ void ray_trace(t_data	*dt)
 	}
 }
 
+float	ray_cone_encounter(t_pv cone, int angle, t_pv *ray, t_pv *enc)
+{
+	float		A;
+	float		B;
+	float		C;
+	float		DV;
+	float 		CO[3];
+	float 		CO_CO_dot;
+	float		COV;
+	float		DCO;
+	float		cos_sqr;
+	float		t;
+
+	DV = dot_prod(ray->v,cone.v);
+
+	cos_sqr = pow(cos(angle * PI_R), 2);
+
+	CO[0] = ray->p[0] - cone.p[0];
+	CO[1] = ray->p[1] - cone.p[1];
+	CO[2] = ray->p[2] - cone.p[2];
+
+	CO_CO_dot = dot_prod(CO,CO) * cos_sqr;
+
+	COV = dot_prod(CO,cone.v);
+
+	DCO = dot_prod(ray->v, CO);
+
+	A = pow(DV,2) - cos_sqr;
+	B = 2 * ((DV * COV) - DCO * cos_sqr);
+	C = pow(COV,2) - CO_CO_dot;
+
+	t = solve_quadratic(A,B,C);
+	if (t == 0)
+		return(0);
+	update_encounter_p(t, ray, enc);
+
+	// fux the normal, now it is half assed
+
+	enc->v[0] = - cone.p[0] + enc->p[0];
+	enc->v[1] = - cone.p[1] + enc->p[1];
+	// enc->v[2] = cone.p[2] - enc->p[2];
+
+	// enc->v[0] = -1;
+	// enc->v[1] = 0;
+	enc->v[2] = 0;
+	normalize(enc->v);
+	return (t);
+
+
+}
+
+float	ray_sphere_encounter(float *sphere, t_pv *ray, t_pv *enc)
+{
+	int			i;
+	float		A;
+	float		B;
+	float		C;
+	// float		det;
+	float		b_vec[3];
+	float		length;
+	float		t;
+
+	A = 1;
+	// b= 2 * ray_v * (ray_p − sphere_p)
+	i = -1;
+	while(++i < 3)
+		b_vec[i] = ray->v[i] * (ray->p[i] - sphere [i]);
+	B = 2 * (b_vec[0] + b_vec[1] + b_vec[2]);
+	// c=|ray_origin - center|^2 − Radius ^2 
+	length = pow(ray->p[0] - sphere[0],2) +
+				pow(ray->p[1] - sphere[1],2) +
+				pow(ray->p[2] - sphere[2],2);
+	C = length - pow(sphere[3],2);
+
+	t = solve_quadratic(A,B,C);
+	if (t == 0)
+		return(0);
+	update_encounter_p(t, ray, enc);
+
+	enc->v[0] = enc->p[0] - sphere[0];
+	enc->v[1] = enc->p[1] - sphere[1];
+	enc->v[2] = enc->p[2] - sphere[2];
+	normalize(enc->v);
+	return (t);
+}
+
 float	ray_box_encounter(float *box, t_pv *ray, t_pv *enc)
 {
 	float t1[3];
@@ -196,6 +307,7 @@ float	ray_box_encounter(float *box, t_pv *ray, t_pv *enc)
 	enc->v[0] = 0;
 	enc->v[1] = 0;
 	enc->v[2] = 0;
+	axis = 1;
 
 	while (++i<3)
 	{
@@ -258,44 +370,10 @@ float	solve_quadratic(float A, float B, float C)
 		else
 			return(0); // should not exist
 	}
+	// if (dist > 1024)
+	// 	return (0);
 	return (dist);
 }
-
-float	ray_sphere_encounter(float *sphere, t_pv *ray, t_pv *enc)
-{
-	int			i;
-	float		A;
-	float		B;
-	float		C;
-	// float		det;
-	float		b_vec[3];
-	float		length;
-	float		t;
-
-	A = 1;
-	// b= 2 * ray_v * (ray_p − sphere_p)
-	i = -1;
-	while(++i < 3)
-		b_vec[i] = ray->v[i] * (ray->p[i] - sphere [i]);
-	B = 2 * (b_vec[0] + b_vec[1] + b_vec[2]);
-	// c=|ray_origin - center|^2 − Radius ^2 
-	length = pow(ray->p[0] - sphere[0],2) +
-				pow(ray->p[1] - sphere[1],2) +
-				pow(ray->p[2] - sphere[2],2);
-	C = length - pow(sphere[3],2);
-
-	t = solve_quadratic(A,B,C);
-	if (t == 0)
-		return(0);
-	update_encounter_p(t, ray, enc);
-
-	enc->v[0] = enc->p[0] - sphere[0];
-	enc->v[1] = enc->p[1] - sphere[1];
-	enc->v[2] = enc->p[2] - sphere[2];
-	normalize(enc->v);
-	return (t);
-}
-
 
 int	ray_surface_encounter(float *surface, t_pv *ray, t_pv *enc)
 {
