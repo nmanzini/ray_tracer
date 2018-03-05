@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/03/02 16:53:16 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/03/05 13:49:12 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,9 @@ void	*cam_data_init(t_cam *ca)
 	ca->fov = 90;
 
 	// camera position xyz
-	ca->cam_p[0] = 0;
+	ca->cam_p[0] = 5;
 	ca->cam_p[1] = 0;
-	ca->cam_p[2] = -5;
+	ca->cam_p[2] = -7;
 
 	// camera vector direction xyz
 	// NOT IN USE
@@ -87,7 +87,7 @@ void	*cam_data_init(t_cam *ca)
 
 	// camera angles in degrees 
 	ca->cam_a[0] = 0;
-	ca->cam_a[1] = 0;
+	ca->cam_a[1] = -30;
 	ca->cam_a[2] = 0;
 
 	cam_data_update(ca);
@@ -138,9 +138,9 @@ void	*pix_data_init(t_pix *px)
 	px->enc->v[2] = 0;
 
 	// pointvector struct of the encounter
-	px->lig->p[0] = 5;
-	px->lig->p[1] = 0;
-	px->lig->p[2] = 0;
+	px->lig->p[0] = -5;
+	px->lig->p[1] = 1;
+	px->lig->p[2] = -2;
 
 	px->lig->v[0] = 0;
 	px->lig->v[1] = 0;

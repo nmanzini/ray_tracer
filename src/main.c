@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/03/02 17:05:16 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/03/05 17:35:34 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ void	update_color(t_pv *enc, t_pv *lig, unsigned int *color)
 	}
 	else
 	{
-		range = (projection + 1) / 2 * 256;
+		range = (projection + 1) / 2 * 255;
 		*color = range + range * 256 + range * 256 * 256;
 	}
 }
@@ -172,12 +172,12 @@ void ray_trace(t_data	*dt)
 			update_ray_v(dt->ca->res,dt->px->pix_p,dt->ca->scr_s,dt->px->ray);
 			rotate_v(dt->px->ray->v, dt->ca->cam_a);
 			
-			if (ray_cone_encounter(dt->sc->cone, 25, dt->px->ray, dt->px->enc))
-			{
-				update_light_v(dt->px->enc, dt->px->lig);
-				update_color(dt->px->enc, dt->px->lig, &dt->px->color);
-				fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
-			}
+			// if (ray_cone_encounter(dt->sc->cone, 25, dt->px->ray, dt->px->enc))
+			// {
+			// 	update_light_v(dt->px->enc, dt->px->lig);
+			// 	update_color(dt->px->enc, dt->px->lig, &dt->px->color);
+			// 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
+			// }
 
 			// if (ray_box_encounter(dt->sc->box, dt->px->ray, dt->px->enc))
 			// {
@@ -185,12 +185,13 @@ void ray_trace(t_data	*dt)
 			// 	update_color(dt->px->enc, dt->px->lig, &dt->px->color);
 			// 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
 			// }
-			// if (ray_sphere_encounter(dt->sc->sphere, dt->px->ray, dt->px->enc))
-			// {
-			// 	update_light_v(dt->px->enc, dt->px->lig);
-			// 	update_color(dt->px->enc, dt->px->lig, &dt->px->color);
-			// 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
-			// }
+
+			if (ray_sphere_encounter(dt->sc->sphere, dt->px->ray, dt->px->enc))
+			{
+				update_light_v(dt->px->enc, dt->px->lig);
+				update_color(dt->px->enc, dt->px->lig, &dt->px->color);
+				fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
+			}
 
 			// if (ray_surface_encounter(dt->sc->surface,dt->px->ray, dt->px->enc))
 			// {
@@ -198,6 +199,7 @@ void ray_trace(t_data	*dt)
 			// 	update_color(dt->px->enc, dt->px->lig, &dt->px->color);
 			// 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
 			// }
+
 			// if (ray_plane_encounter(dt->sc->plane,dt->px->ray, dt->px->enc))
 			// {
 			// 	update_light_v(dt->px->enc, dt->px->lig);
@@ -208,14 +210,75 @@ void ray_trace(t_data	*dt)
 	}
 }
 
+float	ray_cylinder_encounter(t_pv cyl, float r, t_pv *ray, t_pv *enc)
+{
+	float		A;
+	float		B;
+	float		C;
+
+	// general cylinder equation;
+	// x^2 + z^2 - r^2 = 0;
+
+	// cylinder orientation:
+	// pa + va * t
+
+	// vector cylinder equation; q is a point
+	// (q - pa - (va,q - pa)va)2 - r2 = 0
+
+	// substitute q = p + vt and solve
+	// (p - pa + vt - (va,p - pa + vt)va)2 - r2 = 0
+
+	//--------------------------------------------------------------------------
+	// Ray : P(t) = O + V * t
+	// Cylinder [O, D, r].
+	// point Q on cylinder if ((Q - O) x D)^2 = r^2
+	//
+	// Cylinder [A, B, r].
+	// Point P on infinite cylinder if ((P - A) x (B - A))^2 = r^2 * (B - A)^2
+	// expand : ((O - A) x (B - A) + t * (V x (B - A)))^2 = r^2 * (B - A)^2
+	// equation in the form (X + t * Y)^2 = d
+	// where : 
+	//  X = (O - A) x (B - A)
+	//  Y = V x (B - A)
+	//  d = r^2 * (B - A)^2
+	// expand the equation :
+	// t^2 * (Y . Y) + t * (2 * (X . Y)) + (X . X) - d = 0
+	// => second order equation in the form : a*t^2 + b*t + c = 0 where
+	// a = (Y . Y)
+	// b = 2 * (X . Y)
+	// c = (X . X) - d
+	//--------------------------------------------------------------------------
+
+	Vector AB = (B - A);
+	Vector AO = (O - A);
+	Vector AOxAB = (AO ^ AB); // cross product
+	Vector VxAB  = (V ^ AB); // cross product
+	float  ab2   = (AB * AB); // dot product
+	float a      = (VxAB * VxAB); // dot product
+	float b      = 2 * (VxAB * AOxAB); // dot product
+	float c      = (AOxAB * AOxAB) - (r*r * ab2);
+
+
+	Vector AB = cyl.v;
+	Vector AO = (ray->p - cyl.p);
+	Vector AOxAB = (AO ^ AB); // cross product
+	Vector VxAB  = (V ^ AB); // cross product
+	float  ab2   = (AB * AB); // dot product
+	float a      = (VxAB * VxAB); // dot product
+	float b      = 2 * (VxAB * AOxAB); // dot product
+	float c      = (AOxAB * AOxAB) - (r*r * ab2);
+
+	// solve second order equation : a*t^2 + b*t + c = 0
+}
+
 float	ray_cone_encounter(t_pv cone, int angle, t_pv *ray, t_pv *enc)
 {
 	float		A;
 	float		B;
 	float		C;
 	float		DV;
-	float 		CO[3];
-	float 		CO_CO_dot;
+	float		CO[3];
+	float		CO_CO_dot;
 	float		COV;
 	float		DCO;
 	float		cos_sqr;
@@ -255,8 +318,6 @@ float	ray_cone_encounter(t_pv cone, int angle, t_pv *ray, t_pv *enc)
 	enc->v[2] = 0;
 	normalize(enc->v);
 	return (t);
-
-
 }
 
 float	ray_sphere_encounter(float *sphere, t_pv *ray, t_pv *enc)
@@ -339,8 +400,6 @@ float	ray_box_encounter(float *box, t_pv *ray, t_pv *enc)
 	}
 	else
 		return (0);
-
-
 }
 
 float	solve_quadratic(float A, float B, float C)
@@ -358,6 +417,10 @@ float	solve_quadratic(float A, float B, float C)
 		dist = - B / (2 * A);
 		if (dist < 0)
 			return(0);
+	}
+	else if (A == 0)
+	{
+		return (0);
 	}
 	else
 	{
