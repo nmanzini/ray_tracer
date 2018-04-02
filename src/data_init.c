@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/03/05 13:49:12 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/02 15:47:10 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,15 +106,17 @@ void	*pix_data_init(t_pix *px)
 	px->ray = &actual_ray;
 	px->enc = &actual_enc;
 	px->lig = &actual_lig;
-	// point of origin of the ray
-	px->ray_p[0] = 0;
-	px->ray_p[1] = 0;
-	px->ray_p[2] = 0;
 
-	// vector of  the ray
-	px->ray_v[0] = 0;
-	px->ray_v[1] = 0;
-	px->ray_v[2] = 0;
+	// // point of origin of the ray
+	//  maybe will have to be REACTIVATED, NOT SURE!!!
+	// px->ray_p[0] = 0;
+	// px->ray_p[1] = 0;
+	// px->ray_p[2] = 0;
+
+	// // vector of  the ray
+	// px->ray_v[0] = 0;
+	// px->ray_v[1] = 0;
+	// px->ray_v[2] = 0;
 
 	// ___________________________________
 	// 
@@ -137,7 +139,7 @@ void	*pix_data_init(t_pix *px)
 	px->enc->v[1] = 0;
 	px->enc->v[2] = 0;
 
-	// pointvector struct of the encounter
+	// pointvector struct of the light
 	px->lig->p[0] = -5;
 	px->lig->p[1] = 1;
 	px->lig->p[2] = -2;
@@ -150,19 +152,19 @@ void	*pix_data_init(t_pix *px)
 	// 
 
 	// point of intersection with an obj
-	px->int_p[0] = 0;
-	px->int_p[1] = 0;
-	px->int_p[2] = 0;
+	// px->int_p[0] = 0;
+	// px->int_p[1] = 0;
+	// px->int_p[2] = 0;
 
 	// Normal of point of intersection
-	px->int_n[0] = 0;
-	px->int_n[1] = 0;
-	px->int_n[2] = 0;
+	// px->int_n[0] = 0;
+	// px->int_n[1] = 0;
+	// px->int_n[2] = 0;
 
 	// Vector from light to point
-	px->lig_v[0] = 0;
-	px->lig_v[1] = 0;
-	px->lig_v[2] = 0;
+	// px->lig_v[0] = 0;
+	// px->lig_v[1] = 0;
+	// px->lig_v[2] = 0;
 
 	px->color = 0;
 	return (px);
@@ -199,7 +201,9 @@ t_scn	*scn_data_init(t_scn *sc)
 	sc->a_sphere[2] = 0;
 	sc->a_sphere[3] = 0.2;
 
+	// axis of plane
 	sc->plane[0] = 1;
+	// value of axis of plane
 	sc->plane[1] = -1;
 
 	sc->plane2[0] = 1;

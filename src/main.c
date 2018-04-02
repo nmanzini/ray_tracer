@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/03/05 17:35:34 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/02 16:10:19 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,10 +152,15 @@ void	update_color(t_pv *enc, t_pv *lig, unsigned int *color)
 		*color = range + range * 256 + range * 256 * 256;
 	}
 }
+void color_point(t_data	*dt)
+{
+	update_light_v(dt->px->enc, dt->px->lig);
+	update_color(dt->px->enc, dt->px->lig, &dt->px->color);
+	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
+}
 
 void ray_trace(t_data	*dt)
 {
-	float	ray[3];
 	float	t;
 	float	temp_t;
 
@@ -169,107 +174,108 @@ void ray_trace(t_data	*dt)
 		dt->px->pix_p[0] = -1;
 		while (++dt->px->pix_p[0] < dt->ca->res[0])
 		{
+			t = 100000000;
 			update_ray_v(dt->ca->res,dt->px->pix_p,dt->ca->scr_s,dt->px->ray);
 			rotate_v(dt->px->ray->v, dt->ca->cam_a);
 			
-			// if (ray_cone_encounter(dt->sc->cone, 25, dt->px->ray, dt->px->enc))
-			// {
-			// 	update_light_v(dt->px->enc, dt->px->lig);
-			// 	update_color(dt->px->enc, dt->px->lig, &dt->px->color);
-			// 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
-			// }
-
-			// if (ray_box_encounter(dt->sc->box, dt->px->ray, dt->px->enc))
-			// {
-			// 	update_light_v(dt->px->enc, dt->px->lig);
-			// 	update_color(dt->px->enc, dt->px->lig, &dt->px->color);
-			// 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
-			// }
-
-			if (ray_sphere_encounter(dt->sc->sphere, dt->px->ray, dt->px->enc))
+			temp_t = ray_cone_encounter(dt->sc->cone, 25, dt->px->ray, dt->px->enc);
+			if (temp_t < t && temp_t != 0)
 			{
-				update_light_v(dt->px->enc, dt->px->lig);
-				update_color(dt->px->enc, dt->px->lig, &dt->px->color);
-				fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
+				t = temp_t;
+				color_point(dt);
 			}
 
-			// if (ray_surface_encounter(dt->sc->surface,dt->px->ray, dt->px->enc))
-			// {
-			// 	update_light_v(dt->px->enc, dt->px->lig);
-			// 	update_color(dt->px->enc, dt->px->lig, &dt->px->color);
-			// 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
-			// }
+			temp_t = ray_box_encounter(dt->sc->box, dt->px->ray, dt->px->enc);
+			if (temp_t < t && temp_t != 0)
+			{
+				t = temp_t;
+				color_point(dt);
+			}
 
-			// if (ray_plane_encounter(dt->sc->plane,dt->px->ray, dt->px->enc))
-			// {
-			// 	update_light_v(dt->px->enc, dt->px->lig);
-			// 	update_color(dt->px->enc, dt->px->lig, &dt->px->color);
-			// 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
-			// }
+			temp_t = ray_sphere_encounter(dt->sc->sphere, dt->px->ray, dt->px->enc);
+			if (temp_t < t && temp_t != 0)
+			{
+				t = temp_t;
+				color_point(dt);
+			}
+
+			temp_t = ray_surface_encounter(dt->sc->surface, dt->px->ray, dt->px->enc);
+			if (temp_t < t && temp_t != 0)
+			{
+				t = temp_t;
+				color_point(dt);
+			}
+
+			temp_t = ray_plane_encounter(dt->sc->plane ,dt->px->ray, dt->px->enc);
+			if (temp_t < t && temp_t != 0)
+			{
+				t = temp_t;
+				color_point(dt);
+			}
 		}
 	}
 }
 
-float	ray_cylinder_encounter(t_pv cyl, float r, t_pv *ray, t_pv *enc)
-{
-	float		A;
-	float		B;
-	float		C;
+// float	ray_cylinder_encounter(t_pv cyl, float r, t_pv *ray, t_pv *enc)
+// {
+// 	float		A;
+// 	float		B;
+// 	float		C;
 
-	// general cylinder equation;
-	// x^2 + z^2 - r^2 = 0;
+// 	// general cylinder equation;
+// 	// x^2 + z^2 - r^2 = 0;
 
-	// cylinder orientation:
-	// pa + va * t
+// 	// cylinder orientation:
+// 	// pa + va * t
 
-	// vector cylinder equation; q is a point
-	// (q - pa - (va,q - pa)va)2 - r2 = 0
+// 	// vector cylinder equation; q is a point
+// 	// (q - pa - (va,q - pa)va)2 - r2 = 0
 
-	// substitute q = p + vt and solve
-	// (p - pa + vt - (va,p - pa + vt)va)2 - r2 = 0
+// 	// substitute q = p + vt and solve
+// 	// (p - pa + vt - (va,p - pa + vt)va)2 - r2 = 0
 
-	//--------------------------------------------------------------------------
-	// Ray : P(t) = O + V * t
-	// Cylinder [O, D, r].
-	// point Q on cylinder if ((Q - O) x D)^2 = r^2
-	//
-	// Cylinder [A, B, r].
-	// Point P on infinite cylinder if ((P - A) x (B - A))^2 = r^2 * (B - A)^2
-	// expand : ((O - A) x (B - A) + t * (V x (B - A)))^2 = r^2 * (B - A)^2
-	// equation in the form (X + t * Y)^2 = d
-	// where : 
-	//  X = (O - A) x (B - A)
-	//  Y = V x (B - A)
-	//  d = r^2 * (B - A)^2
-	// expand the equation :
-	// t^2 * (Y . Y) + t * (2 * (X . Y)) + (X . X) - d = 0
-	// => second order equation in the form : a*t^2 + b*t + c = 0 where
-	// a = (Y . Y)
-	// b = 2 * (X . Y)
-	// c = (X . X) - d
-	//--------------------------------------------------------------------------
+// 	//--------------------------------------------------------------------------
+// 	// Ray : P(t) = O + V * t
+// 	// Cylinder [O, D, r].
+// 	// point Q on cylinder if ((Q - O) x D)^2 = r^2
+// 	//
+// 	// Cylinder [A, B, r].
+// 	// Point P on infinite cylinder if ((P - A) x (B - A))^2 = r^2 * (B - A)^2
+// 	// expand : ((O - A) x (B - A) + t * (V x (B - A)))^2 = r^2 * (B - A)^2
+// 	// equation in the form (X + t * Y)^2 = d
+// 	// where : 
+// 	//  X = (O - A) x (B - A)
+// 	//  Y = V x (B - A)
+// 	//  d = r^2 * (B - A)^2
+// 	// expand the equation :
+// 	// t^2 * (Y . Y) + t * (2 * (X . Y)) + (X . X) - d = 0
+// 	// => second order equation in the form : a*t^2 + b*t + c = 0 where
+// 	// a = (Y . Y)
+// 	// b = 2 * (X . Y)
+// 	// c = (X . X) - d
+// 	//--------------------------------------------------------------------------
 
-	Vector AB = (B - A);
-	Vector AO = (O - A);
-	Vector AOxAB = (AO ^ AB); // cross product
-	Vector VxAB  = (V ^ AB); // cross product
-	float  ab2   = (AB * AB); // dot product
-	float a      = (VxAB * VxAB); // dot product
-	float b      = 2 * (VxAB * AOxAB); // dot product
-	float c      = (AOxAB * AOxAB) - (r*r * ab2);
+// 	Vector AB = (B - A);
+// 	Vector AO = (O - A);
+// 	Vector AOxAB = (AO ^ AB); // cross product
+// 	Vector VxAB  = (V ^ AB); // cross product
+// 	float  ab2   = (AB * AB); // dot product
+// 	float a      = (VxAB * VxAB); // dot product
+// 	float b      = 2 * (VxAB * AOxAB); // dot product
+// 	float c      = (AOxAB * AOxAB) - (r*r * ab2);
 
 
-	Vector AB = cyl.v;
-	Vector AO = (ray->p - cyl.p);
-	Vector AOxAB = (AO ^ AB); // cross product
-	Vector VxAB  = (V ^ AB); // cross product
-	float  ab2   = (AB * AB); // dot product
-	float a      = (VxAB * VxAB); // dot product
-	float b      = 2 * (VxAB * AOxAB); // dot product
-	float c      = (AOxAB * AOxAB) - (r*r * ab2);
+// 	Vector AB = cyl.v;
+// 	Vector AO = (ray->p - cyl.p);
+// 	Vector AOxAB = (AO ^ AB); // cross product
+// 	Vector VxAB  = (V ^ AB); // cross product
+// 	float  ab2   = (AB * AB); // dot product
+// 	float a      = (VxAB * VxAB); // dot product
+// 	float b      = 2 * (VxAB * AOxAB); // dot product
+// 	float c      = (AOxAB * AOxAB) - (r*r * ab2);
 
-	// solve second order equation : a*t^2 + b*t + c = 0
-}
+// 	// solve second order equation : a*t^2 + b*t + c = 0
+// }
 
 float	ray_cone_encounter(t_pv cone, int angle, t_pv *ray, t_pv *enc)
 {
@@ -438,7 +444,7 @@ float	solve_quadratic(float A, float B, float C)
 	return (dist);
 }
 
-int	ray_surface_encounter(float *surface, t_pv *ray, t_pv *enc)
+float	ray_surface_encounter(float *surface, t_pv *ray, t_pv *enc)
 {
 	int 	axis;
 	float	t;
@@ -474,64 +480,60 @@ int	ray_surface_encounter(float *surface, t_pv *ray, t_pv *enc)
 				if (!(enc->p[i] <= surface[i] + surface[i + 3] && enc->p[i] >= surface[i] - surface[i + 3]))
 					return (0);
 			}
-		return (1);
+		return (t);
 	}
 	return (0);
 }
 
-int	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc)
+float	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc)
 {
 	int 	axis;
 	float	t;
 
 	axis = (int)plane[0];
 	if (ray->v[axis] != 0)
-		// ray->v[axis] * t + ray->p[axis] = plane[1]
+	// ray->v[axis] * t + ray->p[axis] = plane[1]
 		t  = (plane[1] - ray->p[axis]) / ray->v[axis];
 	else
 		return (0);
 	if (t > 0)
 	{
-		// enc->p[0] = ray->p[0] + t * ray->v[0];
-		// enc->p[1] = ray->p[1] + t * ray->v[1];
-		// enc->p[2] = ray->p[2] + t * ray->v[2];
-
 		update_encounter_p(t, ray, enc);
 
 		enc->v[0] = 0;
 		enc->v[1] = 0;
 		enc->v[2] = 0;
-		enc->v[(int)plane[0]] = 1;
-		return (1);
+		enc->v[axis] = 1;
+		return (t);
 	}
 	return (0);
 }
 
-int	ray_plane_prog(float *plane, float	*int_p)
-{
-	if (plane[0] == 0 && int_p[0] <= plane[1] + 0.1 && int_p[0] >= plane[1] - 0.1)
-			return (1);
-	else if (plane[0] == 1 && int_p[1] <= plane[1] + 0.1 && int_p[1] >= plane[1] - 0.1)
-			return (1);
-	else if (plane[0] == 2 && int_p[2] <= plane[1] + 0.1 && int_p[2] >= plane[1] - 0.1)
-			return (1);
-	return (0);
-}
+// int	ray_plane_prog(float *plane, float	*int_p)
+// {
+// 	if (plane[0] == 0 && int_p[0] <= plane[1] + 0.1 && int_p[0] >= plane[1] - 0.1)
+// 			return (1);
+// 	else if (plane[0] == 1 && int_p[1] <= plane[1] + 0.1 && int_p[1] >= plane[1] - 0.1)
+// 			return (1);
+// 	else if (plane[0] == 2 && int_p[2] <= plane[1] + 0.1 && int_p[2] >= plane[1] - 0.1)
+// 			return (1);
+// 	return (0);
+// }
 
-int	ray_sphere_prog(float *sphere, float *int_p)
-{
-	float	s[5];
+// int	ray_sphere_prog(float *sphere, float *int_p)
+// {
+// 	float	s[5];
 
-	s[0] = sphere[0] - int_p[0];
-	s[1] = sphere[1] - int_p[1];
-	s[2] = sphere[2] - int_p[2];
-	s[3] = s[0] * s[0] + s[1] * s[1] + s[2] * s[2];
-	s[4] = sphere[3] * sphere[3];
-	if (s[3] <= s[4] + 0.1 && s[3] >= s[4] - 0.1)
-		return (1);
-	else
-		return (0);
-}
+// 	s[0] = sphere[0] - int_p[0];
+// 	s[1] = sphere[1] - int_p[1];
+// 	s[2] = sphere[2] - int_p[2];
+// 	s[3] = s[0] * s[0] + s[1] * s[1] + s[2] * s[2];
+// 	s[4] = sphere[3] * sphere[3];
+// 	if (s[3] <= s[4] + 0.1 && s[3] >= s[4] - 0.1)
+// 		return (1);
+// 	else
+// 		return (0);
+// }
 
 void	rotate_z(float degree,float *xp, float *yp, float *zp)
 {
@@ -592,9 +594,6 @@ int		main(int ac, char **av)
 
 	dt = init_data(dt);
 	dt->md = mlx_data_init_return(md);
-
-	img_square(dt->md, BLUE);
-
 
 	display(dt);
 	mlx_key_hook(dt->md->win, call_keys, dt);

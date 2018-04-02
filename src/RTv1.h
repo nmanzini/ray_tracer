@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/03/02 15:06:08 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/02 16:10:35 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,8 +163,8 @@ void				fractal_color(t_data *dt, int x, int y, int iter);
 
 float	solve_quadratic(float A, float B, float C);
 void	rotate_v(float *vec,float *angles);
-int	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc);
-int	ray_surface_encounter(float *surface, t_pv *ray, t_pv *enc);
+float 	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc);
+float 	ray_surface_encounter(float *surface, t_pv *ray, t_pv *enc);
 float	ray_sphere_encounter(float *surface, t_pv *ray, t_pv *enc);
 float	ray_box_encounter(float *box, t_pv *ray, t_pv *enc);
 float	ray_cone_encounter(t_pv cone, int angle, t_pv *ray, t_pv *enc);
