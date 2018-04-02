@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/02 16:10:19 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/02 19:59:01 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void	update_ray_p(float *cam_p, t_pv *ray)
 
 void	update_ray_v(int *res, int *pixel, float *scr_s, t_pv *ray)
 {	
+	// create the ray vector based on the screen size, resolution and wich ixel we are analyzing
 	ray->v[0] = - (scr_s[0] / 2) + (scr_s[0] / (res[0] - 1) * pixel[0]);
 	ray->v[1] = + (scr_s[1] / 2) - (scr_s[1] / (res[1] - 1) * pixel[1]);
 	ray->v[2] = + (scr_s[2]);
@@ -63,6 +64,7 @@ void	update_ray_v(int *res, int *pixel, float *scr_s, t_pv *ray)
 
 float dot_prod(float *vec1, float *vec2)
 {
+	// returns the dot product
 	float	result;
 	int		i;
 
@@ -74,6 +76,82 @@ float dot_prod(float *vec1, float *vec2)
 	return (result);
 }
 
+void vec_mult(float *vect, float scalar, float *result)
+{
+	// multiplies a vector by a scalar returned in result
+	result[0] = scalar * vect[0];
+	result[1] = scalar * vect[1]; 
+	result[2] = scalar * vect[2]; 
+}
+
+void vec_sub(float *vect1, float *vect2, float *result)
+{
+	// subtraction between two vector passed into the resul vector
+	result[0] = vect1[0] - vect2[0];
+	result[1] = vect1[1] - vect2[1];
+	result[2] = vect1[2] - vect2[2];
+}
+
+void vec_add(float *vect1, float *vect2, float *result)
+{
+	// addition between two vector passed into the resul vector
+	result[0] = vect1[0] + vect2[0];
+	result[1] = vect1[1] + vect2[1];
+	result[2] = vect1[2] + vect2[2];
+}
+
+void vec_neg(float *vect, float *result)
+{
+	// addition between two vector passed into the resul vector
+	result[0] = - vect[0];
+	result[1] = - vect[1];
+	result[2] = - vect[2];
+}
+
+void min_perp_vec(float *point, float *vector, float *origin, float *normal)
+{
+	// Minimal perpendicular vector between a point and a line
+
+	float pa[3];
+	float pa_d;
+	float pa_dd[3];
+	float neg_a[3];
+	float neg_a_minus_pa_dd[3];
+
+	// (P-A)
+	vec_sub(point,origin,pa);
+	// (P-A).D)
+	pa_d = dot_prod(pa,vector);
+	// ((P-A).D)D
+	vec_mult(vector, pa_d, pa_dd);
+	// -A
+	vec_neg(origin,neg_a);
+
+	// - A - ((P-A).D)D
+	vec_sub(neg_a, pa_dd, neg_a_minus_pa_dd);
+	// - A - ((P-A).D)D + P
+	vec_add(neg_a_minus_pa_dd, point,normal);
+
+	// P - point
+	// D - direction of line (unit length)
+	// A - point in line
+
+	// X - base of the perpendicular line
+
+	//     P
+	//    /|
+	//   / |
+	//  /  v
+	// A---X----->D
+
+	// (P-A).D == |X-A|
+
+	// X == A + ((P-A).D)D
+	// Desired perpendicular: -X + P
+	// desired perpendicular: - A - ((P-A).D)D + P
+}
+
+
 // void	update_intersection_p(float t, float *ray_v, float *cam_p, float *int_p)
 // {
 // 	int_p[0] = cam_p[0] + t * ray_v[0];
@@ -83,6 +161,7 @@ float dot_prod(float *vec1, float *vec2)
 
 void	update_encounter_p(float t, t_pv *ray, t_pv *enc)
 {
+	// given an encounter struct the ray and a distance, updates the poin of intersection
 	enc->p[0] = ray->p[0] + t * ray->v[0];
 	enc->p[1] = ray->p[1] + t * ray->v[1];
 	enc->p[2] = ray->p[2] + t * ray->v[2];
@@ -117,6 +196,7 @@ void	update_encounter_p(float t, t_pv *ray, t_pv *enc)
 
 void	update_light_v(t_pv *enc, t_pv *lig)
 {
+	// updates the light vector toward the encounter point, and normalizes it
 	lig->v[0] = lig->p[0] - enc->p[0];
 	lig->v[1] = lig->p[1] - enc->p[1];
 	lig->v[2] = lig->p[2] - enc->p[2];
@@ -148,23 +228,24 @@ void	update_color(t_pv *enc, t_pv *lig, unsigned int *color)
 	}
 	else
 	{
-		range = (projection + 1) / 2 * 255;
+		range = (projection + 1) / 2 * 256;
+		// range = projection * 256;
 		*color = range + range * 256 + range * 256 * 256;
+		
 	}
 }
-void color_point(t_data	*dt)
+
+void color_point(t_data	*dt, unsigned int color)
 {
 	update_light_v(dt->px->enc, dt->px->lig);
-	update_color(dt->px->enc, dt->px->lig, &dt->px->color);
-	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
+	update_color(dt->px->enc, dt->px->lig, &color);
+	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], color);
 }
 
 void ray_trace(t_data	*dt)
 {
 	float	t;
 	float	temp_t;
-
-	t = 100000000;
 
 	cam_data_update(dt->ca);
 	update_ray_p(dt->ca->cam_p, dt->px->ray);
@@ -174,110 +255,162 @@ void ray_trace(t_data	*dt)
 		dt->px->pix_p[0] = -1;
 		while (++dt->px->pix_p[0] < dt->ca->res[0])
 		{
-			t = 100000000;
+			t = 1024;
 			update_ray_v(dt->ca->res,dt->px->pix_p,dt->ca->scr_s,dt->px->ray);
 			rotate_v(dt->px->ray->v, dt->ca->cam_a);
 			
-			temp_t = ray_cone_encounter(dt->sc->cone, 25, dt->px->ray, dt->px->enc);
+			temp_t = ray_cone_encounter(dt->sc->cone, 5, dt->px->ray, dt->px->enc);
 			if (temp_t < t && temp_t != 0)
 			{
 				t = temp_t;
-				color_point(dt);
+				color_point(dt, WHITE);
+				// fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], WHITE);
 			}
 
 			temp_t = ray_box_encounter(dt->sc->box, dt->px->ray, dt->px->enc);
 			if (temp_t < t && temp_t != 0)
 			{
 				t = temp_t;
-				color_point(dt);
+				color_point(dt, WHITE);
 			}
 
 			temp_t = ray_sphere_encounter(dt->sc->sphere, dt->px->ray, dt->px->enc);
 			if (temp_t < t && temp_t != 0)
 			{
 				t = temp_t;
-				color_point(dt);
+				color_point(dt, WHITE);
 			}
 
 			temp_t = ray_surface_encounter(dt->sc->surface, dt->px->ray, dt->px->enc);
 			if (temp_t < t && temp_t != 0)
 			{
 				t = temp_t;
-				color_point(dt);
+				color_point(dt, WHITE);
 			}
 
 			temp_t = ray_plane_encounter(dt->sc->plane ,dt->px->ray, dt->px->enc);
 			if (temp_t < t && temp_t != 0)
 			{
 				t = temp_t;
-				color_point(dt);
+				color_point(dt, WHITE);
+			}
+
+			temp_t = ray_cylinder_encounter(dt->sc->cylinder, 2, dt->px->ray, dt->px->enc);
+			if (temp_t < t && temp_t != 0)
+			{
+				t = temp_t;
+				color_point(dt, WHITE);
 			}
 		}
 	}
 }
 
-// float	ray_cylinder_encounter(t_pv cyl, float r, t_pv *ray, t_pv *enc)
-// {
-// 	float		A;
-// 	float		B;
-// 	float		C;
-
-// 	// general cylinder equation;
-// 	// x^2 + z^2 - r^2 = 0;
-
-// 	// cylinder orientation:
-// 	// pa + va * t
-
-// 	// vector cylinder equation; q is a point
-// 	// (q - pa - (va,q - pa)va)2 - r2 = 0
-
-// 	// substitute q = p + vt and solve
-// 	// (p - pa + vt - (va,p - pa + vt)va)2 - r2 = 0
-
-// 	//--------------------------------------------------------------------------
-// 	// Ray : P(t) = O + V * t
-// 	// Cylinder [O, D, r].
-// 	// point Q on cylinder if ((Q - O) x D)^2 = r^2
-// 	//
-// 	// Cylinder [A, B, r].
-// 	// Point P on infinite cylinder if ((P - A) x (B - A))^2 = r^2 * (B - A)^2
-// 	// expand : ((O - A) x (B - A) + t * (V x (B - A)))^2 = r^2 * (B - A)^2
-// 	// equation in the form (X + t * Y)^2 = d
-// 	// where : 
-// 	//  X = (O - A) x (B - A)
-// 	//  Y = V x (B - A)
-// 	//  d = r^2 * (B - A)^2
-// 	// expand the equation :
-// 	// t^2 * (Y . Y) + t * (2 * (X . Y)) + (X . X) - d = 0
-// 	// => second order equation in the form : a*t^2 + b*t + c = 0 where
-// 	// a = (Y . Y)
-// 	// b = 2 * (X . Y)
-// 	// c = (X . X) - d
-// 	//--------------------------------------------------------------------------
-
-// 	Vector AB = (B - A);
-// 	Vector AO = (O - A);
-// 	Vector AOxAB = (AO ^ AB); // cross product
-// 	Vector VxAB  = (V ^ AB); // cross product
-// 	float  ab2   = (AB * AB); // dot product
-// 	float a      = (VxAB * VxAB); // dot product
-// 	float b      = 2 * (VxAB * AOxAB); // dot product
-// 	float c      = (AOxAB * AOxAB) - (r*r * ab2);
+float	ray_cylinder_encounter(t_pv cyl, float r, t_pv *ray, t_pv *enc)
+{
+	float		A;
+	float		B;
+	float		C;
+	float		t;
+	float		Dp[3];
+	float		Dp_Va;
+	float		Dp_VaVa[3];
+	float		DpDp_VaVa[3];
+	float		v_va;
+	float		v_vava[3];
+	float		vv_vava[3];
 
 
-// 	Vector AB = cyl.v;
-// 	Vector AO = (ray->p - cyl.p);
-// 	Vector AOxAB = (AO ^ AB); // cross product
-// 	Vector VxAB  = (V ^ AB); // cross product
-// 	float  ab2   = (AB * AB); // dot product
-// 	float a      = (VxAB * VxAB); // dot product
-// 	float b      = 2 * (VxAB * AOxAB); // dot product
-// 	float c      = (AOxAB * AOxAB) - (r*r * ab2);
+	// Dp = ∆p = p - pa 
+	vec_sub(ray->p,cyl.p, Dp);
+	// Dp_Va = (∆p,va)
+	Dp_Va = dot_prod(Dp, cyl.v);
+	// Dp_VaVa = (∆p,va) * va
+	vec_mult(cyl.v, Dp_Va, Dp_VaVa);
+	// DpDp_VaVa =  ∆p - (∆p,va) * va
+	vec_sub(Dp, Dp_VaVa, DpDp_VaVa);
 
-// 	// solve second order equation : a*t^2 + b*t + c = 0
-// }
+
+	// v_va = (v,va)
+	v_va = dot_prod(ray->v, cyl.v);
+	// v_vava = (v,va) * va
+	vec_mult(cyl.v, v_va, v_vava);
+	// vv_vava = v - (v,va) * va
+	vec_sub(ray->v, v_vava, vv_vava);
+
+
+	A = dot_prod(vv_vava,vv_vava);
+	B = 2 * dot_prod(vv_vava,DpDp_VaVa);
+	C = dot_prod(DpDp_VaVa,DpDp_VaVa) - (r*r);
+
+
+	t = solve_quadratic(A,B,C);
+	if (t == 0)
+		return(0);
+	update_encounter_p(t, ray, enc);
+
+	min_perp_vec(enc->p, cyl.v, cyl.p, enc->v);
+	normalize(enc->v);
+
+	return (t);
+}
 
 float	ray_cone_encounter(t_pv cone, int angle, t_pv *ray, t_pv *enc)
+{
+	float		A;
+	float		B;
+	float		C;
+	float		t;
+	float		Dp[3];
+	float		Dp_Va;
+	float		Dp_VaVa[3];
+	float		DpDp_VaVa[3];
+	float		v_va;
+	float		v_vava[3];
+	float		vv_vava[3];
+
+	float		cos_sqr;
+	float		sin_sqr;
+
+
+	// Dp = ∆p = p - pa 
+	vec_sub(ray->p,cone.p, Dp);
+	// Dp_Va = (∆p,va)
+	Dp_Va = dot_prod(Dp, cone.v);
+	// Dp_VaVa = (∆p,va) * va
+	vec_mult(cone.v, Dp_Va, Dp_VaVa);
+	// DpDp_VaVa =  ∆p - (∆p,va) * va
+	vec_sub(Dp, Dp_VaVa, DpDp_VaVa);
+
+
+	// v_va = (v,va)
+	v_va = dot_prod(ray->v, cone.v);
+	// v_vava = (v,va) * va
+	vec_mult(cone.v, v_va, v_vava);
+	// vv_vava = v - (v,va) * va
+	vec_sub(ray->v, v_vava, vv_vava);
+
+
+	cos_sqr = cos(angle * PI_R) * cos(angle * PI_R);
+	sin_sqr = sin(angle * PI_R) * sin(angle * PI_R);
+
+
+	A = cos_sqr * dot_prod(vv_vava,vv_vava) - (sin_sqr * v_va * v_va);
+	B = 2 * cos_sqr * dot_prod(vv_vava,DpDp_VaVa) - (2 * sin_sqr * v_va * Dp_Va);
+	C = cos_sqr * dot_prod(DpDp_VaVa,DpDp_VaVa) - (sin_sqr * Dp_Va * Dp_Va);
+
+
+	t = solve_quadratic(A,B,C);
+	if (t == 0)
+		return(0);
+	update_encounter_p(t, ray, enc);
+
+	min_perp_vec(enc->p, cone.v, cone.p, enc->v);
+	normalize(enc->v);
+
+	return (t);
+}
+
+float	ray_cone_encounter_old(t_pv cone, int angle, t_pv *ray, t_pv *enc)
 {
 	float		A;
 	float		B;
@@ -322,6 +455,8 @@ float	ray_cone_encounter(t_pv cone, int angle, t_pv *ray, t_pv *enc)
 	// enc->v[0] = -1;
 	// enc->v[1] = 0;
 	enc->v[2] = 0;
+
+	min_perp_vec(enc->p, cone.v, cone.p, enc->v);
 	normalize(enc->v);
 	return (t);
 }
@@ -401,7 +536,7 @@ float	ray_box_encounter(float *box, t_pv *ray, t_pv *enc)
 		if (axis > 0)
 			enc->v[axis -1] = - 1;
 		else 
-			enc->v [ - axis -1] = 1;
+			enc->v[- axis -1] = 1;
 		return (tmin);
 	}
 	else
@@ -578,14 +713,15 @@ void	rotate_v(float *vec,float *angles)
 
 /*
 	TODO:
-	-	for every ray check this sphere
-	-	check the distance at whete it hits it
-	-	then save the intesection point then after all normal
-	next do it for multiple objs
-	next do it for multiple kind of objs
+	// Deal with colors properly. 0.5H
+	// FIX the cone problem. 1-3H
+	// make it work with a list of objects 4H
+	// create shadows of objects 4H
+	// read the objects from input and initialize the data
+
+
+
 */
-
-
 
 int		main(int ac, char **av)
 {

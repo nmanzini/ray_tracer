@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/02 15:47:10 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/02 19:29:23 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,9 @@ void	*cam_data_init(t_cam *ca)
 	ca->fov = 90;
 
 	// camera position xyz
-	ca->cam_p[0] = 5;
-	ca->cam_p[1] = 0;
-	ca->cam_p[2] = -7;
+	ca->cam_p[0] = 0;
+	ca->cam_p[1] = 5;
+	ca->cam_p[2] = -20;
 
 	// camera vector direction xyz
 	// NOT IN USE
@@ -87,7 +87,7 @@ void	*cam_data_init(t_cam *ca)
 
 	// camera angles in degrees 
 	ca->cam_a[0] = 0;
-	ca->cam_a[1] = -30;
+	ca->cam_a[1] = 0;
 	ca->cam_a[2] = 0;
 
 	cam_data_update(ca);
@@ -140,9 +140,9 @@ void	*pix_data_init(t_pix *px)
 	px->enc->v[2] = 0;
 
 	// pointvector struct of the light
-	px->lig->p[0] = -5;
+	px->lig->p[0] = 0;
 	px->lig->p[1] = 1;
-	px->lig->p[2] = -2;
+	px->lig->p[2] = -10;
 
 	px->lig->v[0] = 0;
 	px->lig->v[1] = 0;
@@ -176,7 +176,7 @@ t_scn	*scn_data_init(t_scn *sc)
 
 	sc = &actual_sc;
 	// sphere data
-	sc->sphere[0] = 0;
+	sc->sphere[0] = 5;
 	sc->sphere[1] = 0;
 	sc->sphere[2] = 0;
 	sc->sphere[3] = 2;
@@ -213,9 +213,9 @@ t_scn	*scn_data_init(t_scn *sc)
 	// sc->light[1] = 2;
 	// sc->light[2] = -1;
 
-	sc->box[0] = 0.0;
-	sc->box[1] = 0.0;
-	sc->box[2] = 0.0;
+	sc->box[0] = 0;
+	sc->box[1] = 0;
+	sc->box[2] = 0;
 	sc->box[3] = 1.0;
 	sc->box[4] = 2.0;
 	sc->box[5] = 3.0;
@@ -227,12 +227,22 @@ t_scn	*scn_data_init(t_scn *sc)
 	sc->surface[4] = 0;
 	sc->surface[5] = 5;
 
-	sc->cone.p[0] = 0;
-	sc->cone.p[1] = 0;
+	sc->cone.p[0] = -5;
+	sc->cone.p[1] = 5;
 	sc->cone.p[2] = 0;
 	sc->cone.v[0] = 0;
 	sc->cone.v[1] = 1;
 	sc->cone.v[2] = 0;
+	normalize(sc->cone.v);
+
+	sc->cylinder.p[0] = 10;
+	sc->cylinder.p[1] = 0;
+	sc->cylinder.p[2] = 0;
+	sc->cylinder.v[0] = 0;
+	sc->cylinder.v[1] = 1;
+	sc->cylinder.v[2] = 0;
+	normalize(sc->cylinder.v);
+
 	return (sc);
 }
 
