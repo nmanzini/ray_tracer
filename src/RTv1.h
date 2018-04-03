@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/02 18:38:27 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/03 19:43:31 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,19 +93,28 @@ typedef struct		s_pix_struct
 typedef struct		s_scn_struct
 {
 	float			sphere[4];
-	float			x_sphere[4];
-	float			y_sphere[4];
-	float			z_sphere[4];
-	float			a_sphere[4];
-	float			*spheres[4];
-	float			light[4];
 	float			plane[2];
-	float			plane2[2];
-	float			box[6];
-	float			surface[6];
 	t_pv			cone;
 	t_pv			cylinder;
+
+	// float			x_sphere[4];
+	// float			y_sphere[4];
+	// float			z_sphere[4];
+	// float			a_sphere[4];
+	// float			*spheres[4];
+	// float			box[6];
+	// float			surface[6];
 }					t_scn;
+
+typedef struct		s_obj_struct
+{
+	// s = sphere, o = cone, y = cylinder, p = plane, l = light
+	char			type;
+	int				active;
+	t_pv			vp;
+	float			p[6];
+	unsigned int	color;
+}					t_obj;
 
 typedef struct		s_data_struct
 {
@@ -115,6 +124,8 @@ typedef struct		s_data_struct
 	t_scn			*sc;
 	t_cam			*ca;
 	t_pix			*px;
+	t_obj			*ob;
+	int				obj_num;
 }					t_data;
 
 # define BLACK		0x00000000

@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/03 14:11:01 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/03 20:49:01 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ float dot_prod(float *vec1, float *vec2)
 	return (result);
 }
 
-void vec_mult(float *vect, float scalar, float *result)
+void	vec_mult(float *vect, float scalar, float *result)
 {
 	// multiplies a vector by a scalar returned in result
 	result[0] = scalar * vect[0];
@@ -84,7 +84,7 @@ void vec_mult(float *vect, float scalar, float *result)
 	result[2] = scalar * vect[2]; 
 }
 
-void vec_sub(float *vect1, float *vect2, float *result)
+void	vec_sub(float *vect1, float *vect2, float *result)
 {
 	// subtraction between two vector passed into the resul vector
 	result[0] = vect1[0] - vect2[0];
@@ -92,7 +92,7 @@ void vec_sub(float *vect1, float *vect2, float *result)
 	result[2] = vect1[2] - vect2[2];
 }
 
-void vec_add(float *vect1, float *vect2, float *result)
+void	vec_add(float *vect1, float *vect2, float *result)
 {
 	// addition between two vector passed into the resul vector
 	result[0] = vect1[0] + vect2[0];
@@ -100,7 +100,7 @@ void vec_add(float *vect1, float *vect2, float *result)
 	result[2] = vect1[2] + vect2[2];
 }
 
-void vec_neg(float *vect, float *result)
+void	vec_neg(float *vect, float *result)
 {
 	// addition between two vector passed into the resul vector
 	result[0] = - vect[0];
@@ -108,7 +108,12 @@ void vec_neg(float *vect, float *result)
 	result[2] = - vect[2];
 }
 
-void min_perp_vec(float *point, float *vector, float *origin, float *normal)
+float	vec_len(float *vect)
+{
+	return (float_abs(pow(vect[0],2) + pow(vect[1],2) + pow(vect[2],2)));
+}
+
+void	min_perp_vec(float *point, float *vector, float *origin, float *normal)
 {
 	// Minimal perpendicular vector between a point and a line
 
@@ -151,14 +156,6 @@ void min_perp_vec(float *point, float *vector, float *origin, float *normal)
 	// desired perpendicular: - A - ((P-A).D)D + P
 }
 
-
-// void	update_intersection_p(float t, float *ray_v, float *cam_p, float *int_p)
-// {
-// 	int_p[0] = cam_p[0] + t * ray_v[0];
-// 	int_p[1] = cam_p[1] + t * ray_v[1];
-// 	int_p[2] = cam_p[2] + t * ray_v[2];
-// }
-
 void	update_encounter_p(float t, t_pv *ray, t_pv *enc)
 {
 	// given an encounter struct the ray and a distance, updates the poin of intersection
@@ -166,33 +163,6 @@ void	update_encounter_p(float t, t_pv *ray, t_pv *enc)
 	enc->p[1] = ray->p[1] + t * ray->v[1];
 	enc->p[2] = ray->p[2] + t * ray->v[2];
 }
-
-// void	update_sphere_normal_v(float *int_p, float *sphere_p, float *int_n)
-// {
-// 	int_n[0] = int_p[0] - sphere_p[0];
-// 	int_n[1] = int_p[1] - sphere_p[1];
-// 	int_n[2] = int_p[2] - sphere_p[2];
-// 	normalize (int_n);
-// }
-
-// void	update_plane_normal_v(float *plane, float *int_n)
-// {
-// 	int_n[0] = 0;
-// 	int_n[1] = 0;
-// 	int_n[2] = 0;
-// 	if (plane[0] == 0)
-// 	{
-// 		int_n[0] = 1.0;
-// 	}
-// 	else if (plane[0] == 1)
-// 	{
-// 		int_n[1] = 1.0;
-// 	}
-// 	else if (plane[0] == 2)
-// 	{
-// 		int_n[2] = - 1.0;
-// 	}
-// }
 
 void	update_light_v(t_pv *enc, t_pv *lig)
 {
@@ -203,15 +173,38 @@ void	update_light_v(t_pv *enc, t_pv *lig)
 	normalize (lig->v);
 }
 
+float	light_enc_dist(t_pv *enc, t_pv *lig)
+{
+	float light_enc[3];
+
+	vec_sub(enc->p,lig->p,light_enc);
+	return (vec_len(light_enc));
+}
+
 void	update_color(t_pv *enc, t_pv *lig, unsigned int *color)
 {
 	float			projection;
 	unsigned int	range;
-	int				cheker;
+	int				cheker;		
+	float 			light_factor;
+	// units taht it turns it into zero
+	float			light_power;
+	float			light_dist;
+	int				ambient;
 
-	projection = enc->v[0] * lig->v[0] + enc->v[1] * lig->v[1] + enc->v[2] * lig->v[2];
+	projection = dot_prod(enc->v,lig->v);
+	if (projection < 0)
+		projection = 0;
 
 	cheker = 0;
+
+	light_power = 5000;
+	light_dist = light_enc_dist(enc, lig);
+	light_factor = (- (1 / light_power) * light_dist ) + 1;
+
+	ambient = 15;
+	if (light_factor < 0)
+		light_factor = 0;
 
 	if (cheker)
 	{
@@ -228,21 +221,128 @@ void	update_color(t_pv *enc, t_pv *lig, unsigned int *color)
 	}
 	else
 	{
-		range = (projection + 1) / 2 * 256;
+		// range = (projection + 1) / 2 * 256;
 		// range = projection * 256;
+		// *color = range + range * 256 + range * 256 * 256;
+
+		range = projection * (255 - ambient) * light_factor + ambient;
+
+		// range = (projection + 0.2) / 2 * 255 * light_factor;
+
 		*color = range + range * 256 + range * 256 * 256;
-		
 	}
 }
 
-void color_point(t_data	*dt, unsigned int color)
+void color_point(t_data	*dt, float t, unsigned int color)
 {
 	update_light_v(dt->px->enc, dt->px->lig);
-	update_color(dt->px->enc, dt->px->lig, &color);
+	update_color(dt->px->enc, dt->px->lig,  &color);
 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], color);
 }
 
 void ray_trace(t_data	*dt)
+{
+	float	t;
+	float	temp_t;
+	int		i;
+
+	cam_data_update(dt->ca);
+	update_ray_p(dt->ca->cam_p, dt->px->ray);
+	dt->px->pix_p[1] = -1;
+	while (++dt->px->pix_p[1] < dt->ca->res[1])
+	{
+		dt->px->pix_p[0] = -1;
+		while (++dt->px->pix_p[0] < dt->ca->res[0])
+		{
+			t = 1024;
+			// temp_t = 0;
+			update_ray_v(dt->ca->res,dt->px->pix_p,dt->ca->scr_s,dt->px->ray);
+			rotate_v(dt->px->ray->v, dt->ca->cam_a);
+
+			i = 0;
+
+			while (i < dt->obj_num)
+			{
+
+				if (dt->ob[i].type == 's')
+				{
+					temp_t = ray_sphere_encounter(dt->ob[i].p, dt->px->ray, dt->px->enc);
+					// if (temp_t < t && temp_t != 0)
+					// {
+					// 	t = temp_t;
+					// 	color_point(dt, t, WHITE);
+					// }
+				}
+				else if (dt->ob[i].type == 'o')
+				{
+					temp_t = ray_cone_encounter(dt->ob[i].vp, 15, dt->px->ray, dt->px->enc);
+					// if (temp_t < t && temp_t != 0)
+					// {
+					// 	t = temp_t;
+					// 	color_point(dt, t, WHITE);
+					// }
+				}
+				else if (dt->ob[i].type == 'y')
+				{
+					temp_t = ray_cylinder_encounter(dt->ob[i].vp, 1, dt->px->ray, dt->px->enc);
+					// if (temp_t < t && temp_t != 0)
+					// {
+					// 	t = temp_t;
+					// 	color_point(dt, t, WHITE);
+					// }
+				}
+				else if (dt->ob[i].type == 'p')
+				{
+					temp_t = ray_plane_encounter(dt->ob[i].p ,dt->px->ray, dt->px->enc);
+					// if (temp_t < t && temp_t != 0)
+					// {
+					// 	t = temp_t;
+					// 	color_point(dt, t, WHITE);
+					// }
+				}
+				if (temp_t < t && temp_t != 0)
+					{
+						t = temp_t;
+						color_point(dt, t, WHITE);
+					}
+				
+				i++;
+			}
+			
+			// temp_t = ray_cone_encounter(dt->sc->cone, 15, dt->px->ray, dt->px->enc);
+			// if (temp_t < t && temp_t != 0)
+			// {
+			// 	t = temp_t;
+			// 	color_point(dt, t, WHITE);
+			// }
+
+			// temp_t = ray_sphere_encounter(dt->sc->sphere, dt->px->ray, dt->px->enc);
+			// if (temp_t < t && temp_t != 0)
+			// {
+			// 	t = temp_t;
+			// 	color_point(dt, t, WHITE);
+			// }
+
+			// temp_t = ray_plane_encounter(dt->sc->plane ,dt->px->ray, dt->px->enc);
+			// if (temp_t < t && temp_t != 0)
+			// {
+			// 	t = temp_t;
+			// 	color_point(dt, t, WHITE);
+			// }
+
+			// temp_t = ray_cylinder_encounter(dt->sc->cylinder, 2, dt->px->ray, dt->px->enc);
+			// if (temp_t < t && temp_t != 0)
+			// {
+			// 	t = temp_t;
+			// 	color_point(dt, t, WHITE);
+			// }
+
+
+		}
+	}
+}
+
+void ray_trace_old(t_data	*dt)
 {
 	float	t;
 	float	temp_t;
@@ -263,44 +363,43 @@ void ray_trace(t_data	*dt)
 			if (temp_t < t && temp_t != 0)
 			{
 				t = temp_t;
-				color_point(dt, WHITE);
-				// fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], WHITE);
-			}
-
-			temp_t = ray_box_encounter(dt->sc->box, dt->px->ray, dt->px->enc);
-			if (temp_t < t && temp_t != 0)
-			{
-				t = temp_t;
-				color_point(dt, WHITE);
+				color_point(dt, t, WHITE);
 			}
 
 			temp_t = ray_sphere_encounter(dt->sc->sphere, dt->px->ray, dt->px->enc);
 			if (temp_t < t && temp_t != 0)
 			{
 				t = temp_t;
-				color_point(dt, WHITE);
-			}
-
-			temp_t = ray_surface_encounter(dt->sc->surface, dt->px->ray, dt->px->enc);
-			if (temp_t < t && temp_t != 0)
-			{
-				t = temp_t;
-				color_point(dt, WHITE);
+				color_point(dt, t, WHITE);
 			}
 
 			temp_t = ray_plane_encounter(dt->sc->plane ,dt->px->ray, dt->px->enc);
 			if (temp_t < t && temp_t != 0)
 			{
 				t = temp_t;
-				color_point(dt, WHITE);
+				color_point(dt, t, WHITE);
 			}
 
 			temp_t = ray_cylinder_encounter(dt->sc->cylinder, 2, dt->px->ray, dt->px->enc);
 			if (temp_t < t && temp_t != 0)
 			{
 				t = temp_t;
-				color_point(dt, WHITE);
+				color_point(dt, t, WHITE);
 			}
+
+			// temp_t = ray_box_encounter(dt->sc->box, dt->px->ray, dt->px->enc);
+			// if (temp_t < t && temp_t != 0)
+			// {
+			// 	t = temp_t;
+			// 	color_point(dt, WHITE);
+			// }
+			
+			// temp_t = ray_surface_encounter(dt->sc->surface, dt->px->ray, dt->px->enc);
+			// if (temp_t < t && temp_t != 0)
+			// {
+			// 	t = temp_t;
+			// 	color_point(dt, WHITE);
+			// }
 		}
 	}
 }
@@ -648,32 +747,6 @@ float	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc)
 	return (0);
 }
 
-// int	ray_plane_prog(float *plane, float	*int_p)
-// {
-// 	if (plane[0] == 0 && int_p[0] <= plane[1] + 0.1 && int_p[0] >= plane[1] - 0.1)
-// 			return (1);
-// 	else if (plane[0] == 1 && int_p[1] <= plane[1] + 0.1 && int_p[1] >= plane[1] - 0.1)
-// 			return (1);
-// 	else if (plane[0] == 2 && int_p[2] <= plane[1] + 0.1 && int_p[2] >= plane[1] - 0.1)
-// 			return (1);
-// 	return (0);
-// }
-
-// int	ray_sphere_prog(float *sphere, float *int_p)
-// {
-// 	float	s[5];
-
-// 	s[0] = sphere[0] - int_p[0];
-// 	s[1] = sphere[1] - int_p[1];
-// 	s[2] = sphere[2] - int_p[2];
-// 	s[3] = s[0] * s[0] + s[1] * s[1] + s[2] * s[2];
-// 	s[4] = sphere[3] * sphere[3];
-// 	if (s[3] <= s[4] + 0.1 && s[3] >= s[4] - 0.1)
-// 		return (1);
-// 	else
-// 		return (0);
-// }
-
 void	rotate_z(float degree,float *xp, float *yp, float *zp)
 {
 	float	tempx;
@@ -718,13 +791,8 @@ void	rotate_v(float *vec,float *angles)
 /*
 	TODO:
 	// Deal with colors properly. 0.5H
-	// FIX the cone problem. 1-3H
-	// make it work with a list of objects 4H
 	// create shadows of objects 4H
 	// read the objects from input and initialize the data
-
-
-
 */
 
 int		main(int ac, char **av)

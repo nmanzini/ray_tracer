@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/03 14:11:43 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/03 20:47:34 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ t_str	*str_data_init(t_str *st)
 
 void	cam_data_update(t_cam *ca)
 {
+	// fills in the size of the screen in fornt of the camera.
 	// screen sizes: 2 = distance, 0 = x size in real dimension, 1 = y size in real dimension
 	ca->scr_s[2] = 1;
 	ca->scr_s[0] = tan(ca->fov / 2 * PI_R) * ca->scr_s[2];
@@ -68,16 +69,20 @@ void	*cam_data_init(t_cam *ca)
 	ca->max_depth = 20;
 
 	// actual camera sensor resolution;
-	ca->res[0] = WIDTH / 2;
-	ca->res[1] = HEIGHT / 2;
+	ca->res[0] = WIDTH / 4;
+	ca->res[1] = HEIGHT / 4;
 
 	//fov angle
 	ca->fov = 90;
 
+	/*
+	** asdasdasdasdasd
+	*/
+
 	// camera position xyz
 	ca->cam_p[0] = 0;
-	ca->cam_p[1] = 5;
-	ca->cam_p[2] = -20;
+	ca->cam_p[1] = 3;
+	ca->cam_p[2] = -15;
 
 	// camera vector direction xyz
 	// NOT IN USE
@@ -107,20 +112,6 @@ void	*pix_data_init(t_pix *px)
 	px->enc = &actual_enc;
 	px->lig = &actual_lig;
 
-	// // point of origin of the ray
-	//  maybe will have to be REACTIVATED, NOT SURE!!!
-	// px->ray_p[0] = 0;
-	// px->ray_p[1] = 0;
-	// px->ray_p[2] = 0;
-
-	// // vector of  the ray
-	// px->ray_v[0] = 0;
-	// px->ray_v[1] = 0;
-	// px->ray_v[2] = 0;
-
-	// ___________________________________
-	// 
-
 	// pointvector struct of the ray
 	px->ray->p[0] = 0;
 	px->ray->p[1] = 0;
@@ -141,30 +132,14 @@ void	*pix_data_init(t_pix *px)
 
 	// pointvector struct of the light
 	px->lig->p[0] = 0;
-	px->lig->p[1] = 1;
+	px->lig->p[1] = 3;
 	px->lig->p[2] = -10;
 
 	px->lig->v[0] = 0;
 	px->lig->v[1] = 0;
 	px->lig->v[2] = 0;
 
-	// ___________________________________
-	// 
 
-	// point of intersection with an obj
-	// px->int_p[0] = 0;
-	// px->int_p[1] = 0;
-	// px->int_p[2] = 0;
-
-	// Normal of point of intersection
-	// px->int_n[0] = 0;
-	// px->int_n[1] = 0;
-	// px->int_n[2] = 0;
-
-	// Vector from light to point
-	// px->lig_v[0] = 0;
-	// px->lig_v[1] = 0;
-	// px->lig_v[2] = 0;
 
 	px->color = 0;
 	return (px);
@@ -181,39 +156,47 @@ t_scn	*scn_data_init(t_scn *sc)
 	sc->sphere[2] = 0;
 	sc->sphere[3] = 2;
 
-	sc->x_sphere[0] = 2;
-	sc->x_sphere[1] = 0;
-	sc->x_sphere[2] = 0;
-	sc->x_sphere[3] = 0.2;
-
-	sc->y_sphere[0] = 0;
-	sc->y_sphere[1] = 2;
-	sc->y_sphere[2] = 0;
-	sc->y_sphere[3] = 0.2;
-
-	sc->z_sphere[0] = 0;
-	sc->z_sphere[1] = 0; 
-	sc->z_sphere[2] = 2;
-	sc->z_sphere[3] = 0.2;
-
-	sc->a_sphere[0] = 0;
-	sc->a_sphere[1] = 0;
-	sc->a_sphere[2] = 0;
-	sc->a_sphere[3] = 0.2;
-
 	// axis of plane
 	sc->plane[0] = 1;
 	// value of axis of plane
 	sc->plane[1] = -1;
 
-	sc->plane2[0] = 1;
-	sc->plane2[1] = -1;
+	sc->cone.p[0] = -5;
+	sc->cone.p[1] = 5;
+	sc->cone.p[2] = 0;
+	sc->cone.v[0] = 1;
+	sc->cone.v[1] = 1;
+	sc->cone.v[2] = 0;
+	normalize(sc->cone.v);
 
-	// sc->light[0] = 2;
-	// sc->light[1] = 2;
-	// sc->light[2] = -1;
+	sc->cylinder.p[0] = 10;
+	sc->cylinder.p[1] = 0;
+	sc->cylinder.p[2] = 0;
+	sc->cylinder.v[0] = 1;
+	sc->cylinder.v[1] = 1;
+	sc->cylinder.v[2] = 0;
+	normalize(sc->cylinder.v);
 
-	// box not in unse anymore
+	// spheres axis
+
+	// sc->x_sphere[0] = 2;
+	// sc->x_sphere[1] = 0;
+	// sc->x_sphere[2] = 0;
+	// sc->x_sphere[3] = 0.2;
+	// sc->y_sphere[0] = 0;
+	// sc->y_sphere[1] = 2;
+	// sc->y_sphere[2] = 0;
+	// sc->y_sphere[3] = 0.2;
+	// sc->z_sphere[0] = 0;
+	// sc->z_sphere[1] = 0; 
+	// sc->z_sphere[2] = 2;
+	// sc->z_sphere[3] = 0.2;
+	// sc->a_sphere[0] = 0;
+	// sc->a_sphere[1] = 0;
+	// sc->a_sphere[2] = 0;
+	// sc->a_sphere[3] = 0.2;
+
+	// box not in use anymore
 
 	// sc->box[0] = 0;
 	// sc->box[1] = 0;
@@ -230,23 +213,6 @@ t_scn	*scn_data_init(t_scn *sc)
 	// sc->surface[3] = 3;
 	// sc->surface[4] = 0;
 	// sc->surface[5] = 5;
-
-	sc->cone.p[0] = -5;
-	sc->cone.p[1] = 5;
-	sc->cone.p[2] = 0;
-	sc->cone.v[0] = 0;
-	sc->cone.v[1] = 1;
-	sc->cone.v[2] = 0;
-	normalize(sc->cone.v);
-
-	sc->cylinder.p[0] = 10;
-	sc->cylinder.p[1] = 0;
-	sc->cylinder.p[2] = 0;
-	sc->cylinder.v[0] = 0;
-	sc->cylinder.v[1] = 1;
-	sc->cylinder.v[2] = 0;
-	normalize(sc->cylinder.v);
-
 	return (sc);
 }
 
@@ -263,11 +229,73 @@ t_data	*init_data(t_data *dt)
 	static t_pix		*px;
 
 	dt = &actual_dt;
-	// dt->md = mlx_data_init_return(md);
+	// can cancel v
 	dt->cf = cfg_data_init(cf);
+	// can cancel v
 	dt->st = str_data_init(st);
+	// can cancel v
 	dt->sc = scn_data_init(sc);
 	dt->ca = cam_data_init(ca);
 	dt->px = pix_data_init(px);
+
+
+	int obj_num;
+	int i;
+
+	obj_num = 12;
+
+	static t_obj		*ob;
+
+	ob = (t_obj*)malloc(sizeof(t_obj) * obj_num);
+	dt->ob = ob;
+	dt->obj_num = obj_num;
+
+	int x = -10;
+	int y = 0;
+	int z = 0;
+
+	int step = 5;
+
+	ob[0].type = 'p';
+	ob[0].p[0] = 1;
+	ob[0].p[1] = -10;
+	ob[1].type = 'p';
+	ob[1].p[0] = 0;
+	ob[1].p[1] = -10;
+
+
+	i = 2;
+
+	while (i < obj_num)
+	{
+		if (i % 3 == 0)
+			ob[i].type = 's';
+		else if (i % 3 == 1)
+			ob[i].type = 'o';
+		else if (i % 3 == 2)
+			ob[i].type = 'y';
+
+		printf("%c\n",ob[i].type );
+		ob[i].p[0] = x;
+		ob[i].p[1] = 0;
+		ob[i].p[2] = z;
+		ob[i].p[3] = 1;
+		ob[i].vp.p[0] = x;
+		ob[i].vp.p[1] = 0;
+		ob[i].vp.p[2] = z;
+		ob[i].vp.v[0] = i % 2;
+		ob[i].vp.v[1] = 1;
+		ob[i].vp.v[2] = 0;
+		normalize(ob[i].vp.v);
+		ob[i].color = WHITE;
+		x += step;
+		y += step;
+		z += step;
+
+		i++;
+	}
+
+
+
 	return (dt);
 }
