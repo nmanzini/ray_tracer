@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/02 19:29:23 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/03 14:11:43 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,19 +213,23 @@ t_scn	*scn_data_init(t_scn *sc)
 	// sc->light[1] = 2;
 	// sc->light[2] = -1;
 
-	sc->box[0] = 0;
-	sc->box[1] = 0;
-	sc->box[2] = 0;
-	sc->box[3] = 1.0;
-	sc->box[4] = 2.0;
-	sc->box[5] = 3.0;
+	// box not in unse anymore
 
-	sc->surface[0] = 3.5;
-	sc->surface[1] = 0;
-	sc->surface[2] = 5.5;
-	sc->surface[3] = 3;
-	sc->surface[4] = 0;
-	sc->surface[5] = 5;
+	// sc->box[0] = 0;
+	// sc->box[1] = 0;
+	// sc->box[2] = 0;
+	// sc->box[3] = 1.0;
+	// sc->box[4] = 2.0;
+	// sc->box[5] = 3.0;
+
+	// surface not in use anymore
+
+	// sc->surface[0] = 3.5;
+	// sc->surface[1] = 0;
+	// sc->surface[2] = 5.5;
+	// sc->surface[3] = 3;
+	// sc->surface[4] = 0;
+	// sc->surface[5] = 5;
 
 	sc->cone.p[0] = -5;
 	sc->cone.p[1] = 5;

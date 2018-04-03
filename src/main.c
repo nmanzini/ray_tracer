@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/02 19:59:01 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/03 14:11:01 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,7 +259,7 @@ void ray_trace(t_data	*dt)
 			update_ray_v(dt->ca->res,dt->px->pix_p,dt->ca->scr_s,dt->px->ray);
 			rotate_v(dt->px->ray->v, dt->ca->cam_a);
 			
-			temp_t = ray_cone_encounter(dt->sc->cone, 5, dt->px->ray, dt->px->enc);
+			temp_t = ray_cone_encounter(dt->sc->cone, 15, dt->px->ray, dt->px->enc);
 			if (temp_t < t && temp_t != 0)
 			{
 				t = temp_t;
@@ -403,7 +403,6 @@ float	ray_cone_encounter(t_pv cone, int angle, t_pv *ray, t_pv *enc)
 	if (t == 0)
 		return(0);
 	update_encounter_p(t, ray, enc);
-
 	min_perp_vec(enc->p, cone.v, cone.p, enc->v);
 	normalize(enc->v);
 
@@ -489,9 +488,7 @@ float	ray_sphere_encounter(float *sphere, t_pv *ray, t_pv *enc)
 		return(0);
 	update_encounter_p(t, ray, enc);
 
-	enc->v[0] = enc->p[0] - sphere[0];
-	enc->v[1] = enc->p[1] - sphere[1];
-	enc->v[2] = enc->p[2] - sphere[2];
+	vec_sub(enc->p,sphere,enc->v);
 	normalize(enc->v);
 	return (t);
 }
@@ -548,14 +545,17 @@ float	solve_quadratic(float A, float B, float C)
 	float det;
 	float dist;
 	float t[2];
+	float det_error;
 
-	det = pow(B,2) - 4 * A * C;
+	det_error = 0.1;
+
+	det = pow(B,2) - (4 * A * C);
 
 	if (det < 0)
 		return(0);	
 	else if (det == 0)
 	{
-		dist = - B / (2 * A);
+		dist = - (B / (2 * A));
 		if (dist < 0)
 			return(0);
 	}
@@ -570,6 +570,10 @@ float	solve_quadratic(float A, float B, float C)
 		if (t[0] < t[1] && t[0] > 0)
 			dist = t[0];
 		else if (t[1] < t[0] && t[1] > 0)
+			dist = t[1];
+		else if (t[0] > 0)
+			dist = t[0];
+		else if (t[1] > 0)
 			dist = t[1];
 		else
 			return(0); // should not exist
@@ -627,7 +631,7 @@ float	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc)
 
 	axis = (int)plane[0];
 	if (ray->v[axis] != 0)
-	// ray->v[axis] * t + ray->p[axis] = plane[1]
+		// ray->v[axis] * t + ray->p[axis] = plane[1]
 		t  = (plane[1] - ray->p[axis]) / ray->v[axis];
 	else
 		return (0);
