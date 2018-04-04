@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/03 19:43:31 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/04 19:18:17 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,13 +80,13 @@ typedef struct		s_pix_struct
 	t_pv			*lig;
 	int				pix_p[2];
 
-	float			ray_p[3];
-	float			ray_v[3];
+	// float			ray_p[3];
+	// float			ray_v[3];
 
-	float			int_p[3];
-	float			int_n[3];
+	// float			int_p[3];
+	// float			int_n[3];
 
-	float			lig_v[3];
+	// float			lig_v[3];
 	unsigned int	color;
 }					t_pix;
 
@@ -138,7 +138,7 @@ typedef struct		s_data_struct
 /*
 ** main.c
 */
-void	ray_trace(t_data	*dt);
+void				ray_trace(t_data	*dt);
 float				float_abs(float f);
 int					read_input(t_data *dt, int ac, char **av);
 int					motion_function(int x, int y, t_data *dt);
@@ -149,7 +149,7 @@ t_mlx				*mlx_data_init_return(t_mlx *md);
 void				cfg_setup(t_cfg *cf);
 t_cfg				*cfg_data_init(t_cfg *cf);
 t_data				*init_data(t_data *dt);
-void	cam_data_update(t_cam *ca);
+void				cam_data_update(t_cam *ca);
 /*
 ** call_keys_general.c
 */
@@ -163,8 +163,8 @@ void				make_image(t_mlx *md);
 void				img_square(t_mlx *md, unsigned int color);
 void				fill_pixel(t_mlx *md, int x, int y,
 								unsigned int color);
-void	display(t_data	*dt);
-void	fill_pixel_res(t_data *dt,int r_x, int r_y, unsigned int color);
+void				display(t_data	*dt);
+void				fill_pixel_res(t_data *dt,int r_x, int r_y, unsigned int color);
 void				img_square_dim(t_mlx *md, int *p1, int *p2,
 								unsigned int color);
 /*

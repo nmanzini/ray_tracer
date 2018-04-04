@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:02:37 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/03 20:51:29 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/03 20:52:11 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ int		call_keys(int keycode, t_data *dt)
 		if (keycode == 38)
 	{
 		ft_putendl("j		move ligth left");
-		dt->px->lig->p[0] -= 2;
+		dt->px->lig->p[0] -= 3;
 	}
 	call_keys_general(keycode, dt);
 	call_keys_camera_mov(keycode, dt);

@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/03 20:49:01 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/04 19:34:35 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ void	vec_neg(float *vect, float *result)
 
 float	vec_len(float *vect)
 {
-	return (float_abs(pow(vect[0],2) + pow(vect[1],2) + pow(vect[2],2)));
+	return (sqrt(float_abs(pow(vect[0],2) + pow(vect[1],2) + pow(vect[2],2))));
 }
 
 void	min_perp_vec(float *point, float *vector, float *origin, float *normal)
@@ -131,29 +131,10 @@ void	min_perp_vec(float *point, float *vector, float *origin, float *normal)
 	vec_mult(vector, pa_d, pa_dd);
 	// -A
 	vec_neg(origin,neg_a);
-
 	// - A - ((P-A).D)D
 	vec_sub(neg_a, pa_dd, neg_a_minus_pa_dd);
 	// - A - ((P-A).D)D + P
-	vec_add(neg_a_minus_pa_dd, point,normal);
-
-	// P - point
-	// D - direction of line (unit length)
-	// A - point in line
-
-	// X - base of the perpendicular line
-
-	//     P
-	//    /|
-	//   / |
-	//  /  v
-	// A---X----->D
-
-	// (P-A).D == |X-A|
-
-	// X == A + ((P-A).D)D
-	// Desired perpendicular: -X + P
-	// desired perpendicular: - A - ((P-A).D)D + P
+	vec_add(neg_a_minus_pa_dd, point, normal);
 }
 
 void	update_encounter_p(float t, t_pv *ray, t_pv *enc)
@@ -167,9 +148,9 @@ void	update_encounter_p(float t, t_pv *ray, t_pv *enc)
 void	update_light_v(t_pv *enc, t_pv *lig)
 {
 	// updates the light vector toward the encounter point, and normalizes it
-	lig->v[0] = lig->p[0] - enc->p[0];
-	lig->v[1] = lig->p[1] - enc->p[1];
-	lig->v[2] = lig->p[2] - enc->p[2];
+	lig->v[0] = -lig->p[0] + enc->p[0];
+	lig->v[1] = -lig->p[1] + enc->p[1];
+	lig->v[2] = -lig->p[2] + enc->p[2];
 	normalize (lig->v);
 }
 
@@ -181,24 +162,27 @@ float	light_enc_dist(t_pv *enc, t_pv *lig)
 	return (vec_len(light_enc));
 }
 
-void	update_color(t_pv *enc, t_pv *lig, unsigned int *color)
+void	update_color(t_pv *enc, t_pv *lig, unsigned int *color, int shadow)
 {
 	float			projection;
-	unsigned int	range;
-	int				cheker;		
+	unsigned int	range;	
 	float 			light_factor;
 	// units taht it turns it into zero
 	float			light_power;
 	float			light_dist;
 	int				ambient;
+	float				shadow_range;
 
-	projection = dot_prod(enc->v,lig->v);
+	shadow_range = 1;
+	if (shadow)
+		shadow_range = 0.5;
+
+	projection = - dot_prod(enc->v,lig->v);
 	if (projection < 0)
 		projection = 0;
 
-	cheker = 0;
+	light_power = 200;
 
-	light_power = 5000;
 	light_dist = light_enc_dist(enc, lig);
 	light_factor = (- (1 / light_power) * light_dist ) + 1;
 
@@ -206,45 +190,116 @@ void	update_color(t_pv *enc, t_pv *lig, unsigned int *color)
 	if (light_factor < 0)
 		light_factor = 0;
 
-	if (cheker)
-	{
-		if ((int)enc->p[0] % 2 >= 1 || (int)enc->p[2] % 2 >= 1)
-		{
-			range = (projection + 1) / 2 * 256;
-			*color = range + range * 256 + range * 256 * 256;
-		}
-		else
-		{
-			range = (projection + 1) / 2 * 128;
-			*color = range + range * 256 + range * 256 * 256;
-		}
-	}
-	else
-	{
-		// range = (projection + 1) / 2 * 256;
-		// range = projection * 256;
-		// *color = range + range * 256 + range * 256 * 256;
-
-		range = projection * (255 - ambient) * light_factor + ambient;
-
-		// range = (projection + 0.2) / 2 * 255 * light_factor;
-
-		*color = range + range * 256 + range * 256 * 256;
-	}
+	range = projection * (255 - ambient) * light_factor * shadow_range + ambient;
+	*color = rgb(range,range,range);
 }
 
-void color_point(t_data	*dt, float t, unsigned int color)
+float check_obj_temp_t(t_pv *ray, t_pv *enc, t_obj ob)
 {
+	float temp_t;
+	if (ob.type == 's')
+	{
+		temp_t = ray_sphere_encounter(ob.p, ray, enc);
+	}
+	else if (ob.type == 'o')
+	{
+		temp_t = ray_cone_encounter(ob.vp, 15, ray, enc);
+	}
+	else if (ob.type == 'y')
+	{
+		temp_t = ray_cylinder_encounter(ob.vp, 1, ray, enc);
+	}
+	else if (ob.type == 'p')
+	{
+		temp_t = ray_plane_encounter(ob.p ,ray, enc);
+	}
+	return temp_t;
+}
+
+int loop_obj_shadow(t_pv *enc, t_pv *lig, t_obj *ob, int exc)
+{
+	int i;
+	float temp_t;
+	t_pv	dummy;
+	float	light_dist;
+
+	light_dist = light_enc_dist(enc, lig);
+
+	i = -1;
+
+	while (ob[++i].type != 'n')
+	{	
+		if (i != exc)
+			temp_t = check_obj_temp_t(lig, &dummy, ob[i]);
+		if (temp_t > 0 && temp_t< light_dist)
+			return (1);
+	}
+	return (0);
+}
+
+void color_point(t_data	*dt, int exc,  unsigned int color)
+{
+	float dist;
+	float dist_to_obj;
+	float light_dist;
+	int shadow;
+
 	update_light_v(dt->px->enc, dt->px->lig);
-	update_color(dt->px->enc, dt->px->lig,  &color);
+
+	shadow = loop_obj_shadow(dt->px->enc, dt->px->lig, dt->ob, exc);
+
+
+	update_color(dt->px->enc, dt->px->lig, &color, shadow);
 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], color);
+}
+
+
+
+void loop_trough_objs(t_data	*dt)
+{
+	int		i;
+	float	temp_t;
+	float	t;
+
+	t = 1024;
+	i = -1;
+	while (++i < dt->obj_num)
+	{
+		temp_t = check_obj_temp_t(dt->px->ray, dt->px->enc,dt->ob[i]);
+		if (temp_t < t && temp_t != 0)
+		{
+			t = temp_t;
+			color_point(dt, i, WHITE);
+		}
+	}
 }
 
 void ray_trace(t_data	*dt)
 {
 	float	t;
 	float	temp_t;
-	int		i;
+
+
+	cam_data_update(dt->ca);
+	update_ray_p(dt->ca->cam_p, dt->px->ray);
+	dt->px->pix_p[1] = -1;
+	while (++dt->px->pix_p[1] < dt->ca->res[1])
+	{
+		dt->px->pix_p[0] = -1;
+		while (++dt->px->pix_p[0] < dt->ca->res[0])
+		{
+			update_ray_v(dt->ca->res,dt->px->pix_p,dt->ca->scr_s,dt->px->ray);
+			rotate_v(dt->px->ray->v, dt->ca->cam_a);
+
+			loop_trough_objs(dt);
+		}
+	}
+}
+
+void ray_trace_old(t_data	*dt)
+{
+	float	t;
+	float	temp_t;
 
 	cam_data_update(dt->ca);
 	update_ray_p(dt->ca->cam_p, dt->px->ray);
@@ -255,59 +310,8 @@ void ray_trace(t_data	*dt)
 		while (++dt->px->pix_p[0] < dt->ca->res[0])
 		{
 			t = 1024;
-			// temp_t = 0;
 			update_ray_v(dt->ca->res,dt->px->pix_p,dt->ca->scr_s,dt->px->ray);
 			rotate_v(dt->px->ray->v, dt->ca->cam_a);
-
-			i = 0;
-
-			while (i < dt->obj_num)
-			{
-
-				if (dt->ob[i].type == 's')
-				{
-					temp_t = ray_sphere_encounter(dt->ob[i].p, dt->px->ray, dt->px->enc);
-					// if (temp_t < t && temp_t != 0)
-					// {
-					// 	t = temp_t;
-					// 	color_point(dt, t, WHITE);
-					// }
-				}
-				else if (dt->ob[i].type == 'o')
-				{
-					temp_t = ray_cone_encounter(dt->ob[i].vp, 15, dt->px->ray, dt->px->enc);
-					// if (temp_t < t && temp_t != 0)
-					// {
-					// 	t = temp_t;
-					// 	color_point(dt, t, WHITE);
-					// }
-				}
-				else if (dt->ob[i].type == 'y')
-				{
-					temp_t = ray_cylinder_encounter(dt->ob[i].vp, 1, dt->px->ray, dt->px->enc);
-					// if (temp_t < t && temp_t != 0)
-					// {
-					// 	t = temp_t;
-					// 	color_point(dt, t, WHITE);
-					// }
-				}
-				else if (dt->ob[i].type == 'p')
-				{
-					temp_t = ray_plane_encounter(dt->ob[i].p ,dt->px->ray, dt->px->enc);
-					// if (temp_t < t && temp_t != 0)
-					// {
-					// 	t = temp_t;
-					// 	color_point(dt, t, WHITE);
-					// }
-				}
-				if (temp_t < t && temp_t != 0)
-					{
-						t = temp_t;
-						color_point(dt, t, WHITE);
-					}
-				
-				i++;
-			}
 			
 			// temp_t = ray_cone_encounter(dt->sc->cone, 15, dt->px->ray, dt->px->enc);
 			// if (temp_t < t && temp_t != 0)
@@ -336,56 +340,6 @@ void ray_trace(t_data	*dt)
 			// 	t = temp_t;
 			// 	color_point(dt, t, WHITE);
 			// }
-
-
-		}
-	}
-}
-
-void ray_trace_old(t_data	*dt)
-{
-	float	t;
-	float	temp_t;
-
-	cam_data_update(dt->ca);
-	update_ray_p(dt->ca->cam_p, dt->px->ray);
-	dt->px->pix_p[1] = -1;
-	while (++dt->px->pix_p[1] < dt->ca->res[1])
-	{
-		dt->px->pix_p[0] = -1;
-		while (++dt->px->pix_p[0] < dt->ca->res[0])
-		{
-			t = 1024;
-			update_ray_v(dt->ca->res,dt->px->pix_p,dt->ca->scr_s,dt->px->ray);
-			rotate_v(dt->px->ray->v, dt->ca->cam_a);
-			
-			temp_t = ray_cone_encounter(dt->sc->cone, 15, dt->px->ray, dt->px->enc);
-			if (temp_t < t && temp_t != 0)
-			{
-				t = temp_t;
-				color_point(dt, t, WHITE);
-			}
-
-			temp_t = ray_sphere_encounter(dt->sc->sphere, dt->px->ray, dt->px->enc);
-			if (temp_t < t && temp_t != 0)
-			{
-				t = temp_t;
-				color_point(dt, t, WHITE);
-			}
-
-			temp_t = ray_plane_encounter(dt->sc->plane ,dt->px->ray, dt->px->enc);
-			if (temp_t < t && temp_t != 0)
-			{
-				t = temp_t;
-				color_point(dt, t, WHITE);
-			}
-
-			temp_t = ray_cylinder_encounter(dt->sc->cylinder, 2, dt->px->ray, dt->px->enc);
-			if (temp_t < t && temp_t != 0)
-			{
-				t = temp_t;
-				color_point(dt, t, WHITE);
-			}
 
 			// temp_t = ray_box_encounter(dt->sc->box, dt->px->ray, dt->px->enc);
 			// if (temp_t < t && temp_t != 0)

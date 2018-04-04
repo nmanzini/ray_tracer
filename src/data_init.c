@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/03 20:47:34 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/04 19:23:49 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,7 +219,6 @@ t_scn	*scn_data_init(t_scn *sc)
 t_data	*init_data(t_data *dt)
 {
 	// commented the mlx structs and initiated outside to avoid changin window
-	// if the
 	static t_data		actual_dt;
 	// static t_mlx		*md;
 	static t_cfg		*cf;
@@ -238,17 +237,18 @@ t_data	*init_data(t_data *dt)
 	dt->ca = cam_data_init(ca);
 	dt->px = pix_data_init(px);
 
-
 	int obj_num;
 	int i;
 
-	obj_num = 12;
+	obj_num = 15;
 
 	static t_obj		*ob;
 
-	ob = (t_obj*)malloc(sizeof(t_obj) * obj_num);
+	ob = (t_obj*)malloc(sizeof(t_obj) * (obj_num + 1));
 	dt->ob = ob;
 	dt->obj_num = obj_num;
+
+	ob[obj_num].type = 'n';
 
 	int x = -10;
 	int y = 0;
@@ -275,7 +275,6 @@ t_data	*init_data(t_data *dt)
 		else if (i % 3 == 2)
 			ob[i].type = 'y';
 
-		printf("%c\n",ob[i].type );
 		ob[i].p[0] = x;
 		ob[i].p[1] = 0;
 		ob[i].p[2] = z;
