@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/04 19:34:35 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/04 20:07:03 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,11 +186,15 @@ void	update_color(t_pv *enc, t_pv *lig, unsigned int *color, int shadow)
 	light_dist = light_enc_dist(enc, lig);
 	light_factor = (- (1 / light_power) * light_dist ) + 1;
 
-	ambient = 15;
+	ambient = 30;
 	if (light_factor < 0)
 		light_factor = 0;
 
 	range = projection * (255 - ambient) * light_factor * shadow_range + ambient;
+
+	if (shadow)
+		range = ambient;
+
 	*color = rgb(range,range,range);
 }
 
@@ -253,8 +257,6 @@ void color_point(t_data	*dt, int exc,  unsigned int color)
 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], color);
 }
 
-
-
 void loop_trough_objs(t_data	*dt)
 {
 	int		i;
@@ -278,7 +280,6 @@ void ray_trace(t_data	*dt)
 {
 	float	t;
 	float	temp_t;
-
 
 	cam_data_update(dt->ca);
 	update_ray_p(dt->ca->cam_p, dt->px->ray);
