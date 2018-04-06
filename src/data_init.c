@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/06 15:58:09 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/06 17:46:58 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -237,62 +237,60 @@ t_data	*init_data(t_data *dt)
 	dt->ca = cam_data_init(ca);
 	dt->px = pix_data_init(px);
 
-	int obj_num;
-	int i;
+	// int obj_num;
+	// int i;
 
-	obj_num = 15;
+	// obj_num = 15;
 
-	static t_obj		*ob;
+	// static t_obj		*ob;
 
-	ob = (t_obj*)malloc(sizeof(t_obj) * (obj_num + 1));
-	dt->ob = ob;
-	dt->obj_num = obj_num;
+	// ob = (t_obj*)malloc(sizeof(t_obj) * (obj_num + 1));
+	// dt->ob = ob;
+	// dt->obj_num = obj_num;
 
-	ob[obj_num].type = 'n';
+	// ob[obj_num].type = 'n';
 
-	int x = -10;
-	int y = 0;
-	int z = 0;
+	// int x = -10;
+	// int y = 0;
+	// int z = 0;
 
-	int step = 5;
+	// int step = 5;
 
-	ob[0].type = 'p';
-	ob[0].p[0] = 1;
-	ob[0].p[1] = -10;
-	ob[1].type = 'p';
-	ob[1].p[0] = 0;
-	ob[1].p[1] = -10;
+	// ob[0].type = 'p';
+	// ob[0].p[0] = 1;
+	// ob[0].p[1] = -10;
+	// ob[1].type = 'p';
+	// ob[1].p[0] = 0;
+	// ob[1].p[1] = -10;
 
+	// i = 2;
+	// while (i < obj_num)
+	// {
+	// 	if (i % 3 == 0)
+	// 		ob[i].type = 's';
+	// 	else if (i % 3 == 1)
+	// 		ob[i].type = 'o';
+	// 	else if (i % 3 == 2)
+	// 		ob[i].type = 'y';
 
-	i = 2;
+	// 	ob[i].p[0] = x;
+	// 	ob[i].p[1] = 0;
+	// 	ob[i].p[2] = z;
+	// 	ob[i].p[3] = 1;
+	// 	ob[i].vp.p[0] = x;
+	// 	ob[i].vp.p[1] = 0;
+	// 	ob[i].vp.p[2] = z;
+	// 	ob[i].vp.v[0] = i % 2;
+	// 	ob[i].vp.v[1] = 1;
+	// 	ob[i].vp.v[2] = 0;
+	// 	normalize(ob[i].vp.v);
+	// 	ob[i].color = WHITE;
+	// 	x += step;
+	// 	y += step;
+	// 	z += step;
 
-	while (i < obj_num)
-	{
-		if (i % 3 == 0)
-			ob[i].type = 's';
-		else if (i % 3 == 1)
-			ob[i].type = 'o';
-		else if (i % 3 == 2)
-			ob[i].type = 'y';
-
-		ob[i].p[0] = x;
-		ob[i].p[1] = 0;
-		ob[i].p[2] = z;
-		ob[i].p[3] = 1;
-		ob[i].vp.p[0] = x;
-		ob[i].vp.p[1] = 0;
-		ob[i].vp.p[2] = z;
-		ob[i].vp.v[0] = i % 2;
-		ob[i].vp.v[1] = 1;
-		ob[i].vp.v[2] = 0;
-		normalize(ob[i].vp.v);
-		ob[i].color = WHITE;
-		x += step;
-		y += step;
-		z += step;
-
-		i++;
-	}
+	// 	i++;
+	// }
 
 
 

@@ -6,35 +6,173 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/05 19:40:05 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/05 20:04:39 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/07 00:57:35 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	check_file(av[1])
-{
-	// check if teh file is fine and returns the number of objects
+#include "RTv1.h"
 
-	// check if the number of lines is fine
+int	check_file(char *path)
+{
+	int		fd;
+	char	*line;
+	int		obj_n;
+
+	obj_n = 0;
+
+	fd = open(path, O_RDONLY);
+	ft_putendl("OPENED");
+	if (fd == -1)
+		return (0);
+	while (get_next_line(fd, &line) > 0)
+	{
+		if (line[0] != '#' && obj_n == 0)
+		{
+			obj_n = ft_atoi(line);
+		}
+		free(line);
+	}
+	free(line);
+	if (close(fd) == -1)
+		return (0);
+	ft_putendl("CLOSED");
+	return (obj_n);
 }
 
-int	get_input(t_obj *ob, int ac, char **av)
+int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 {
+	int i;
+	char *line2;
+	char **list;
+	int j;
+
+
+	i = 0;
+	if (line[0] == 's')
+	{
+		if (line[2] == '0')
+			return(0);
+		*i_obj = *i_obj + 1;
+
+		dt->ob[*i_obj].type = 's';
+		get_next_line(fd, &line2);
+		list = ft_strsplit(line2, ',');
+
+		while (i < 4)
+		{
+			dt->ob[*i_obj].p[i] = atof(list[i]);
+			i++;
+		}
+		free(line2);
+	}
+	else if (line[0] == 'o')
+	{
+		if (line[2] == '0')
+			return(0);
+		*i_obj = *i_obj + 1;
+		dt->ob[*i_obj].type = 'o';
+		get_next_line(fd,&line2);
+		list = ft_strsplit(line2, ',');
+
+		while (i < 3)
+		{
+			dt->ob[*i_obj].vp.p[i] = atof(list[i]); // (float)line[i * 2] - 48;
+			dt->ob[*i_obj].vp.v[i] = atof(list[i + 3]); // (float)line[i * 2 + 6] - 48;
+			normalize (dt->ob[*i_obj].vp.v);
+			i++;
+		}
+	}
+	else if (line[0] == 'y')
+	{
+		if (line[2] == '0')
+			return(0);
+		*i_obj = *i_obj + 1;
+		dt->ob[*i_obj].type = 'y';
+		get_next_line(fd,&line2);
+		list = ft_strsplit(line2, ',');
+
+		while (i < 3)
+		{
+			dt->ob[*i_obj].vp.p[i] = atof(list[i]); // (float)line[i * 2] - 48;
+			dt->ob[*i_obj].vp.v[i] = atof(list[i + 3]); // (float)line[i * 2 + 6] - 48;
+			normalize (dt->ob[*i_obj].vp.v);
+			i++;
+		}
+	}
+	
+	// else if (line[0] == 'p')
+	// {
+	// 	return (0);
+	// }
+
+	return (0);
+}
+
+int loop_trough(char *file_path, t_data *dt)
+{
+	int		fd;
+	char	*line;
+	int		i_obj;
+
+	i_obj = -1;
+
+	fd = open(file_path, O_RDONLY);
+	if (fd == -1)
+		return (-1);
+	while (get_next_line(fd, &line) > 0 )
+	{	
+		if (line[0] != '#' && line[0] != 0 && line[0] != 10)
+		{
+			write_obj(dt,fd,line,&i_obj);
+		}
+		free(line);
+	}
+	free(line);
+	if (close(fd) == -1)
+		return (-1);
+	return (0);
+}
+
+int read_file(char *path, t_data *dt, int obj_num)
+{
+	dt->ob  = (t_obj*)malloc(sizeof(t_obj) * (obj_num + 1));
+	dt->obj_num = obj_num;
+
+	dt->ob[obj_num].type = 'n';
+
+	ft_putnbr(obj_num);
+	ft_putstr(" objs allocated\n");
+	
+	loop_trough(path, dt);
+
+	return (0);
+
+}
+
+
+int	get_input(t_data *dt, int ac, char **av)
+{
+	int obj_num;
+
+	obj_num = 0;
 
 	if (ac != 2)
 	{
-		ft_putstr("usage: ./RTv1 file.rt\n");
+		ft_putstr("usage: ./RTv1 scene\n");
 		return (1);
 	}
-	if (get_matrix(av[1], md))
+	else if (!(obj_num = check_file(av[1])))
 	{
 		ft_putstr("Invalid File\n");
-		ft_putstr("usage: ./RTv1 file.rt\n");
+		ft_putstr("usage: ./RTv1 scene\n");
 		return (2);
 	}
-	md->in->name = av[1];
-	get_max_size(md);
-	md->in->matrix_p = get_matrix_p(md->in->m, md->in->n, 3);
-	ft_putstr(av[1]);
+	else
+	{
+		ft_putstr("Reading\n");
+		read_file(av[1], dt, obj_num);
+	}
+
 	ft_putstr(" loaded.\n");
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/04 19:18:17 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/06 17:33:14 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,6 +173,8 @@ void				img_square_dim(t_mlx *md, int *p1, int *p2,
 unsigned int		rgb(int red, int green, int blue);
 void				fractal_color(t_data *dt, int x, int y, int iter);
 
+
+
 float	solve_quadratic(float A, float B, float C);
 void	rotate_v(float *vec,float *angles);
 float 	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc);
@@ -183,4 +185,9 @@ float	ray_cone_encounter(t_pv cone, int angle, t_pv *ray, t_pv *enc);
 float	ray_cylinder_encounter(t_pv cyl, float r, t_pv *ray, t_pv *enc);
 void	normalize(float *vec);
 
+
+/*
+** main.c
+*/
+int	get_input(t_data *dt, int ac, char **av);
 #endif

@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/05 20:04:41 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/06 21:27:38 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,6 +205,8 @@ void	update_color(t_pv *enc, t_pv *lig, unsigned int *color, int shadow)
 float check_obj_temp_t(t_pv *ray, t_pv *enc, t_obj ob)
 {
 	float temp_t;
+
+	temp_t = 0;
 	if (ob.type == 's')
 	{
 		temp_t = ray_sphere_encounter(ob.p, ray, enc);
@@ -269,7 +271,7 @@ void loop_trough_objs(t_data	*dt)
 
 	t = 1024;
 	i = -1;
-	while (++i < dt->obj_num)
+	while (dt->ob[++i].type != 'n')
 	{
 		temp_t = check_obj_temp_t(dt->px->ray, dt->px->enc,dt->ob[i]);
 		if (temp_t < t && temp_t != 0)
@@ -760,10 +762,18 @@ int		main(int ac, char **av)
 	static t_mlx	*md;
 
 	dt = init_data(dt);
-	dt->md = mlx_data_init_return(md);
-
-	display(dt);
-	mlx_key_hook(dt->md->win, call_keys, dt);
-	mlx_loop(dt->md->mlx);
+	if (!get_input(dt,ac,av))
+	{
+		ft_putstr("Really good indeed!!!\n");
+		dt->md = mlx_data_init_return(md);
+		display(dt);
+		mlx_key_hook(dt->md->win, call_keys, dt);
+		mlx_loop(dt->md->mlx);
+	}
+	else
+	{
+		ft_putstr("ERROR, EXITING!!!\n");
+		exit(0);
+	}
 	return (0);
 }
