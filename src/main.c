@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/04 20:07:03 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/05 20:04:41 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	print_vector(float *vec, char *str)
 
 void	normalize(float *vec)
 {
-	// normilizes a 3 dim array of ints.
+	// normilizes a 3 dim array of floats.
 	float len;
 
 	len = sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
@@ -41,8 +41,6 @@ void	normalize(float *vec)
 		vec[1] /= len;
 		vec[2] /= len;
 	}
-	else
-		return;
 }
 
 void	update_ray_p(float *cam_p, t_pv *ray)
@@ -171,7 +169,7 @@ void	update_color(t_pv *enc, t_pv *lig, unsigned int *color, int shadow)
 	float			light_power;
 	float			light_dist;
 	int				ambient;
-	float				shadow_range;
+	float			shadow_range;
 
 	shadow_range = 1;
 	if (shadow)
@@ -181,14 +179,20 @@ void	update_color(t_pv *enc, t_pv *lig, unsigned int *color, int shadow)
 	if (projection < 0)
 		projection = 0;
 
-	light_power = 200;
+	light_power = 150;
 
 	light_dist = light_enc_dist(enc, lig);
+
+	// linear
 	light_factor = (- (1 / light_power) * light_dist ) + 1;
 
+	// quadratic with power
+	light_factor = light_power / pow(0.1*light_dist,2);
+
+	if (light_factor > 1)
+		light_factor = 1;
+
 	ambient = 30;
-	if (light_factor < 0)
-		light_factor = 0;
 
 	range = projection * (255 - ambient) * light_factor * shadow_range + ambient;
 
@@ -235,7 +239,7 @@ int loop_obj_shadow(t_pv *enc, t_pv *lig, t_obj *ob, int exc)
 	{	
 		if (i != exc)
 			temp_t = check_obj_temp_t(lig, &dummy, ob[i]);
-		if (temp_t > 0 && temp_t< light_dist)
+		if (temp_t > 0 && temp_t < light_dist -0.001)
 			return (1);
 	}
 	return (0);
