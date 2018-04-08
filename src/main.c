@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/08 18:57:36 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/08 23:07:49 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,47 +160,51 @@ float	light_enc_dist(t_pv *enc, t_pv *lig)
 	return (vec_len(light_enc));
 }
 
-void	update_color(t_pv *enc, t_pv *lig, unsigned int *color, int shadow)
+void	update_color(t_pix *px, t_obj *ob)
 {
 	float			projection;
-	unsigned int	range;	
+	float			range;	
 	float 			light_factor;
 	// units taht it turns it into zero
 	float			light_power;
 	float			light_dist;
-	int				ambient;
+	float				ambient;
 	float			shadow_range;
 
 	shadow_range = 1;
-	if (shadow)
+	if (px->shadow)
 		shadow_range = 0.5;
 
-	projection = - dot_prod(enc->v,lig->v);
+	projection = - dot_prod(px->enc->v, px->lig->v);
 	if (projection < 0)
 		projection = 0;
 
 	light_power = 150;
 
-	light_dist = light_enc_dist(enc, lig);
+	light_dist = light_enc_dist(px->enc, px->lig);
 
 	// linear
 	light_factor = (- (1 / light_power) * light_dist ) + 1;
 
 	// quadratic with power
-	light_factor = light_power / pow(0.1*light_dist,2);
+	light_factor = light_power / pow(0.1 * light_dist,2);
 
 	if (light_factor > 1)
 		light_factor = 1;
 
-	ambient = 30;
+	ambient = 0.10;
 
-	range = projection * (255 - ambient) * light_factor * shadow_range + ambient;
+	range = projection * (1 - ambient) * light_factor * shadow_range + ambient;
 
-	if (shadow)
+	if (px->shadow)
 		range = ambient;
 
-	*color = rgb(range,range,range);
-}
+	// range /= range / 255;
+
+	px->color = rgb_to_ui(range * ob->rgb[0],range * ob->rgb[1],range * ob->rgb[2]);
+	// px->color = range;
+
+	}
 
 float check_obj_temp_t(t_pv *ray, t_pv *enc, t_obj ob)
 {
@@ -247,7 +251,7 @@ int loop_obj_shadow(t_pv *enc, t_pv *lig, t_obj *ob, int exc)
 	return (0);
 }
 
-void color_point(t_data	*dt, int exc,  unsigned int color)
+void color_point(t_data	*dt, int i)
 {
 	float dist;
 	float dist_to_obj;
@@ -256,11 +260,11 @@ void color_point(t_data	*dt, int exc,  unsigned int color)
 
 	update_light_v(dt->px->enc, dt->px->lig);
 
-	shadow = loop_obj_shadow(dt->px->enc, dt->px->lig, dt->ob, exc);
+	dt->px->shadow = loop_obj_shadow(dt->px->enc, dt->px->lig, dt->ob, i);
 
 
-	update_color(dt->px->enc, dt->px->lig, &color, shadow);
-	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], color);
+	update_color(dt->px, &dt->ob[i]);
+	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
 }
 
 void loop_trough_objs(t_data	*dt)
@@ -277,7 +281,7 @@ void loop_trough_objs(t_data	*dt)
 		if (temp_t < t && temp_t != 0)
 		{
 			t = temp_t;
-			color_point(dt, i, WHITE);
+			color_point(dt, i);
 		}
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/05 19:40:05 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/08 22:01:17 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/08 23:03:01 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,9 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 			i++;
 		}
 		free(line2);
+		dt->ob[*i_obj].rgb[0] = 0;
+		dt->ob[*i_obj].rgb[1] = 255;
+		dt->ob[*i_obj].rgb[2] = 255;
 	}
 	else if (line[0] == 'o')
 	{
@@ -79,6 +82,9 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 			i++;
 		}
 		normalize (dt->ob[*i_obj].vp.v);
+		dt->ob[*i_obj].rgb[0] = 255;
+		dt->ob[*i_obj].rgb[1] = 255;
+		dt->ob[*i_obj].rgb[2] = 0;
 	}
 	else if (line[0] == 'y')
 	{
@@ -96,6 +102,9 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 			i++;
 		}
 		normalize (dt->ob[*i_obj].vp.v);
+		dt->ob[*i_obj].rgb[0] = 255;
+		dt->ob[*i_obj].rgb[1] = 255;
+		dt->ob[*i_obj].rgb[2] = 0;
 	}
 	else if (line[0] == 'p')
 	{
@@ -112,6 +121,9 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 			i++;
 		}
 		normalize (dt->ob[*i_obj].p);
+		dt->ob[*i_obj].rgb[0] = 255;
+		dt->ob[*i_obj].rgb[1] = 0;
+		dt->ob[*i_obj].rgb[2] = 255;
 	}
 	else if (line[0] == 'c')
 	{

@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/08 21:59:37 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/08 22:58:35 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,14 +79,7 @@ typedef struct		s_pix_struct
 	t_pv			*enc;
 	t_pv			*lig;
 	int				pix_p[2];
-
-	// float			ray_p[3];
-	// float			ray_v[3];
-
-	// float			int_p[3];
-	// float			int_n[3];
-
-	// float			lig_v[3];
+	int				shadow;
 	unsigned int	color;
 }					t_pix;
 
@@ -114,6 +107,7 @@ typedef struct		s_obj_struct
 	t_pv			vp;
 	float			p[6];
 	unsigned int	color;
+	int				rgb[3];
 }					t_obj;
 
 typedef struct		s_data_struct
@@ -170,7 +164,7 @@ void				img_square_dim(t_mlx *md, int *p1, int *p2,
 /*
 ** colors_utlis.c
 */
-unsigned int		rgb(int red, int green, int blue);
+unsigned int		rgb_to_ui(int red, int green, int blue);
 void				fractal_color(t_data *dt, int x, int y, int iter);
 
 

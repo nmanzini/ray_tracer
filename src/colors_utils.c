@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   colors_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nicola <nicola@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 14:16:18 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/02/05 22:25:51 by nicola           ###   ########.fr       */
+/*   Updated: 2018/04/08 22:58:29 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void			fractal_color(t_data *dt, int x, int y, int iter)
 	// fill_pixel(dt->md, x, y, dt->cf->i_to_c[dt->cf->c_flag](dt, iter));
 }
 
-unsigned int	rgb(int red, int green, int blue)
+unsigned int	rgb_to_ui(int red, int green, int blue)
 {
 	unsigned int color;
 
