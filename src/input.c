@@ -6,11 +6,24 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/05 19:40:05 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/08 23:03:01 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/08 23:15:27 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RTv1.h"
+
+void free_list_str(char **list)
+{	
+	int i;
+
+	i = 0;
+	while (list[i] != 0)
+	{
+		free(list[i++]);
+	}
+	free(list[i]);
+	free(list);
+}
 
 int	check_file(char *path)
 {
@@ -62,6 +75,7 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 			i++;
 		}
 		free(line2);
+		free_list_str(list);
 		dt->ob[*i_obj].rgb[0] = 0;
 		dt->ob[*i_obj].rgb[1] = 255;
 		dt->ob[*i_obj].rgb[2] = 255;
@@ -82,6 +96,8 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 			i++;
 		}
 		normalize (dt->ob[*i_obj].vp.v);
+		free(line2);
+		free_list_str(list);
 		dt->ob[*i_obj].rgb[0] = 255;
 		dt->ob[*i_obj].rgb[1] = 255;
 		dt->ob[*i_obj].rgb[2] = 0;
@@ -102,6 +118,8 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 			i++;
 		}
 		normalize (dt->ob[*i_obj].vp.v);
+		free(line2);
+		free_list_str(list);
 		dt->ob[*i_obj].rgb[0] = 255;
 		dt->ob[*i_obj].rgb[1] = 255;
 		dt->ob[*i_obj].rgb[2] = 0;
@@ -121,6 +139,8 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 			i++;
 		}
 		normalize (dt->ob[*i_obj].p);
+		free(line2);
+		free_list_str(list);
 		dt->ob[*i_obj].rgb[0] = 255;
 		dt->ob[*i_obj].rgb[1] = 0;
 		dt->ob[*i_obj].rgb[2] = 255;
@@ -138,6 +158,8 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 			dt->ca->cam_a[i] = ft_atoi(list[i + 3]);
 			i++;
 		}
+		free(line2);
+		free_list_str(list);
 	}
 	else if (line[0] == 'l')
 	{
@@ -151,6 +173,8 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 			dt->px->lig->p[i] = ft_atoi(list[i]);
 			i++;
 		}
+		free(line2);
+		free_list_str(list);
 	}
 
 	return (0);
