@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/05 19:40:05 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/07 00:57:35 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/08 19:27:30 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,8 @@ int	check_file(char *path)
 		return (0);
 	while (get_next_line(fd, &line) > 0)
 	{
-		if (line[0] != '#' && obj_n == 0)
-		{
-			obj_n = ft_atoi(line);
-		}
+		if (line[0] == 's' || line[0] == 'o' || line[0] == 'y' ||line[0] == 'p')
+			obj_n += 1;
 		free(line);
 	}
 	free(line);
@@ -60,7 +58,7 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 
 		while (i < 4)
 		{
-			dt->ob[*i_obj].p[i] = atof(list[i]);
+			dt->ob[*i_obj].p[i] = ft_atoi(list[i]);
 			i++;
 		}
 		free(line2);
@@ -76,11 +74,11 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 
 		while (i < 3)
 		{
-			dt->ob[*i_obj].vp.p[i] = atof(list[i]); // (float)line[i * 2] - 48;
-			dt->ob[*i_obj].vp.v[i] = atof(list[i + 3]); // (float)line[i * 2 + 6] - 48;
-			normalize (dt->ob[*i_obj].vp.v);
+			dt->ob[*i_obj].vp.p[i] = ft_atoi(list[i]); 
+			dt->ob[*i_obj].vp.v[i] = ft_atoi(list[i + 3]); 
 			i++;
 		}
+		normalize (dt->ob[*i_obj].vp.v);
 	}
 	else if (line[0] == 'y')
 	{
@@ -93,17 +91,55 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 
 		while (i < 3)
 		{
-			dt->ob[*i_obj].vp.p[i] = atof(list[i]); // (float)line[i * 2] - 48;
-			dt->ob[*i_obj].vp.v[i] = atof(list[i + 3]); // (float)line[i * 2 + 6] - 48;
-			normalize (dt->ob[*i_obj].vp.v);
+			dt->ob[*i_obj].vp.p[i] = ft_atoi(list[i]); 
+			dt->ob[*i_obj].vp.v[i] = ft_atoi(list[i + 3]); 
+			i++;
+		}
+		normalize (dt->ob[*i_obj].vp.v);
+	}
+	else if (line[0] == 'p')
+	{
+		if (line[2] == '0')
+			return(0);
+		*i_obj = *i_obj + 1;
+		dt->ob[*i_obj].type = 'p';
+		get_next_line(fd,&line2);
+		list = ft_strsplit(line2, ',');
+
+		while (i < 4)
+		{
+			dt->ob[*i_obj].p[i] = ft_atoi(list[i]); 
+			i++;
+		}
+		normalize (dt->ob[*i_obj].p);
+	}
+	else if (line[0] == 'c')
+	{
+		if (line[2] == '0')
+			return(0);
+		get_next_line(fd,&line2);
+		list = ft_strsplit(line2, ',');
+
+		while (i < 3)
+		{
+			dt->ca->cam_p[i] = ft_atoi(list[i]);
+			dt->ca->cam_a[i] = ft_atoi(list[i + 3]);
 			i++;
 		}
 	}
-	
-	// else if (line[0] == 'p')
-	// {
-	// 	return (0);
-	// }
+	else if (line[0] == 'l')
+	{
+		if (line[2] == '0')
+			return(0);
+		get_next_line(fd,&line2);
+		list = ft_strsplit(line2, ',');
+
+		while (i < 3)
+		{
+			dt->px->lig->p[i] = ft_atoi(list[i]);
+			i++;
+		}
+	}
 
 	return (0);
 }
@@ -128,6 +164,17 @@ int loop_trough(char *file_path, t_data *dt)
 		free(line);
 	}
 	free(line);
+
+	// dt->ob[8].type = 'p';
+	// dt->ob[8].p[0] = 0;
+	// dt->ob[8].p[1] = 1;
+	// dt->ob[8].p[2] = 0;
+	// // normalize(dt->ob[8].p);
+	// dt->ob[8].p[3] = 100;
+
+
+
+
 	if (close(fd) == -1)
 		return (-1);
 	return (0);

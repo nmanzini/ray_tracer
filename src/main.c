@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/06 21:27:38 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/08 18:57:36 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -686,6 +686,27 @@ float	ray_surface_encounter(float *surface, t_pv *ray, t_pv *enc)
 
 float	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc)
 {
+	float	t;
+	t = - (plane[0] * ray->p[0] + plane[1] * ray->p[1] + plane[2] * ray->p[2] -  plane[3]) / 
+	(plane[0] * ray->v[0] + plane[1] * ray->v[1] + plane[2] * ray->v[2]);
+
+	if (t > 0)
+	{
+		update_encounter_p(t, ray, enc);
+
+		// normalize (plane);
+		enc->v[0] = plane[0];
+		enc->v[1] = plane[1];
+		enc->v[2] = plane[2];
+		normalize(enc->v);
+		return (t);
+	}
+	return (0);
+}
+
+
+float	ray_plane_encounter_old(float *plane, t_pv *ray, t_pv *enc)
+{
 	int 	axis;
 	float	t;
 
@@ -751,9 +772,10 @@ void	rotate_v(float *vec,float *angles)
 
 /*
 	TODO:
-	// Deal with colors properly. 0.5H
-	// create shadows of objects 4H
-	// read the objects from input and initialize the data
+	ALSO NOT: fix the ft_atof (maybe not necessary) 1-2 h
+	Norminette this shit 4h
+	bring color in 2h
+	check fof breaking the input
 */
 
 int		main(int ac, char **av)
