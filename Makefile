@@ -6,7 +6,7 @@
 #    By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/29 17:51:18 by nmanzini          #+#    #+#              #
-#    Updated: 2018/02/21 16:40:25 by nmanzini         ###   ########.fr        #
+#    Updated: 2018/04/08 22:23:02 by nmanzini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,7 @@ SRC = 	./src/main.c 				\
 		./src/mlx_utils.c			\
 		./src/colors_utils.c		\
 		./src/data_init.c  			\
+		./src/input.c				\
 
 OBJ = $(SRC:.c=.o)
 
