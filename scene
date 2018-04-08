@@ -5,7 +5,7 @@ c,1
 
 # light, active
 l,1
-0,5,20
+0,5,-20
 
 # sphere, active
 # x,y,z, radius
