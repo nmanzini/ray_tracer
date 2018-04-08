@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/08 23:07:49 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/08 23:40:30 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,17 +163,13 @@ float	light_enc_dist(t_pv *enc, t_pv *lig)
 void	update_color(t_pix *px, t_obj *ob)
 {
 	float			projection;
-	float			range;	
+	float			ra;	
 	float 			light_factor;
-	// units taht it turns it into zero
 	float			light_power;
 	float			light_dist;
 	float				ambient;
-	float			shadow_range;
 
-	shadow_range = 1;
-	if (px->shadow)
-		shadow_range = 0.5;
+
 
 	projection = - dot_prod(px->enc->v, px->lig->v);
 	if (projection < 0)
@@ -182,28 +178,17 @@ void	update_color(t_pix *px, t_obj *ob)
 	light_power = 150;
 
 	light_dist = light_enc_dist(px->enc, px->lig);
-
-	// linear
-	light_factor = (- (1 / light_power) * light_dist ) + 1;
-
-	// quadratic with power
-	light_factor = light_power / pow(0.1 * light_dist,2);
+	light_factor = light_power / pow(0.5*light_dist,2);
 
 	if (light_factor > 1)
 		light_factor = 1;
 
 	ambient = 0.10;
-
-	range = projection * (1 - ambient) * light_factor * shadow_range + ambient;
-
+	ra = projection * (1 - ambient) * light_factor + ambient;
 	if (px->shadow)
-		range = ambient;
+		ra = ambient;
 
-	// range /= range / 255;
-
-	px->color = rgb_to_ui(range * ob->rgb[0],range * ob->rgb[1],range * ob->rgb[2]);
-	// px->color = range;
-
+	px->color = rgb_to_ui(ra * ob->rgb[0],ra * ob->rgb[1],ra * ob->rgb[2]);
 	}
 
 float check_obj_temp_t(t_pv *ray, t_pv *enc, t_obj ob)
@@ -776,9 +761,7 @@ void	rotate_v(float *vec,float *angles)
 
 /*
 	TODO:
-	ALSO NOT: fix the ft_atof (maybe not necessary) 1-2 h
 	Norminette this shit 4h
-	bring color in 2h
 	check fof breaking the input
 */
 

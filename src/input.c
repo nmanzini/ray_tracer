@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/05 19:40:05 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/08 23:21:56 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/08 23:52:27 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,17 +232,7 @@ int loop_trough(char *file_path, t_data *dt)
 		free(line);
 	}
 	free(line);
-
-	// dt->ob[8].type = 'p';
-	// dt->ob[8].p[0] = 0;
-	// dt->ob[8].p[1] = 1;
-	// dt->ob[8].p[2] = 0;
-	// // normalize(dt->ob[8].p);
-	// dt->ob[8].p[3] = 100;
-
-
-
-
+	
 	if (close(fd) == -1)
 		return (-1);
 	return (0);
