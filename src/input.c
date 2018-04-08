@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/05 19:40:05 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/08 23:15:27 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/08 23:21:56 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,17 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 		}
 		free(line2);
 		free_list_str(list);
-		dt->ob[*i_obj].rgb[0] = 0;
-		dt->ob[*i_obj].rgb[1] = 255;
-		dt->ob[*i_obj].rgb[2] = 255;
+
+		get_next_line(fd, &line2);
+		list = ft_strsplit(line2, ',');
+		i = 0;
+		while (i < 3)
+		{
+			dt->ob[*i_obj].rgb[i] = ft_atoi(list[i]);
+			i++;
+		}
+		free(line2);
+		free_list_str(list);
 	}
 	else if (line[0] == 'o')
 	{
@@ -98,9 +106,17 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 		normalize (dt->ob[*i_obj].vp.v);
 		free(line2);
 		free_list_str(list);
-		dt->ob[*i_obj].rgb[0] = 255;
-		dt->ob[*i_obj].rgb[1] = 255;
-		dt->ob[*i_obj].rgb[2] = 0;
+
+		get_next_line(fd, &line2);
+		list = ft_strsplit(line2, ',');
+		i = 0;
+		while (i < 3)
+		{
+			dt->ob[*i_obj].rgb[i] = ft_atoi(list[i]);
+			i++;
+		}
+		free(line2);
+		free_list_str(list);
 	}
 	else if (line[0] == 'y')
 	{
@@ -120,9 +136,17 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 		normalize (dt->ob[*i_obj].vp.v);
 		free(line2);
 		free_list_str(list);
-		dt->ob[*i_obj].rgb[0] = 255;
-		dt->ob[*i_obj].rgb[1] = 255;
-		dt->ob[*i_obj].rgb[2] = 0;
+		
+		get_next_line(fd, &line2);
+		list = ft_strsplit(line2, ',');
+		i = 0;
+		while (i < 3)
+		{
+			dt->ob[*i_obj].rgb[i] = ft_atoi(list[i]);
+			i++;
+		}
+		free(line2);
+		free_list_str(list);
 	}
 	else if (line[0] == 'p')
 	{
@@ -141,9 +165,17 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 		normalize (dt->ob[*i_obj].p);
 		free(line2);
 		free_list_str(list);
-		dt->ob[*i_obj].rgb[0] = 255;
-		dt->ob[*i_obj].rgb[1] = 0;
-		dt->ob[*i_obj].rgb[2] = 255;
+		
+		get_next_line(fd, &line2);
+		list = ft_strsplit(line2, ',');
+		i = 0;
+		while (i < 3)
+		{
+			dt->ob[*i_obj].rgb[i] = ft_atoi(list[i]);
+			i++;
+		}
+		free(line2);
+		free_list_str(list);
 	}
 	else if (line[0] == 'c')
 	{
