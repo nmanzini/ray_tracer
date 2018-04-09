@@ -202,11 +202,11 @@ float check_obj_temp_t(t_pv *ray, t_pv *enc, t_obj ob)
 	}
 	else if (ob.type == 'o')
 	{
-		temp_t = ray_cone_encounter(ob.vp, 15, ray, enc);
+		temp_t = ray_cone_encounter(ob.vp, ob.p[0], ray, enc);
 	}
 	else if (ob.type == 'y')
 	{
-		temp_t = ray_cylinder_encounter(ob.vp, 1, ray, enc);
+		temp_t = ray_cylinder_encounter(ob.vp, ob.p[0], ray, enc);
 	}
 	else if (ob.type == 'p')
 	{

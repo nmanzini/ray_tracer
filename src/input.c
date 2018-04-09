@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/05 19:40:05 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/08 23:52:27 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/09 13:57:05 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 			dt->ob[*i_obj].vp.v[i] = ft_atoi(list[i + 3]); 
 			i++;
 		}
+		dt->ob[*i_obj].p[0] = ft_atoi(list[6]);
 		normalize (dt->ob[*i_obj].vp.v);
 		free(line2);
 		free_list_str(list);
@@ -133,6 +134,7 @@ int 	write_obj(t_data *dt, int fd, char *line, int *i_obj)
 			dt->ob[*i_obj].vp.v[i] = ft_atoi(list[i + 3]); 
 			i++;
 		}
+		dt->ob[*i_obj].p[0] = ft_atoi(list[6]);
 		normalize (dt->ob[*i_obj].vp.v);
 		free(line2);
 		free_list_str(list);
