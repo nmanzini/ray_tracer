@@ -6,7 +6,11 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/05 19:40:05 by nmanzini          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2018/04/09 13:33:05 by nmanzini         ###   ########.fr       */
+=======
+/*   Updated: 2018/04/08 23:21:56 by nmanzini         ###   ########.fr       */
+>>>>>>> parent of 862c7f6... pre norminette owrking
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,6 +244,20 @@ int		loop_trough(char *file_path, t_data *dt)
 		free(line);
 	}
 	free(line);
+<<<<<<< HEAD
+=======
+
+	// dt->ob[8].type = 'p';
+	// dt->ob[8].p[0] = 0;
+	// dt->ob[8].p[1] = 1;
+	// dt->ob[8].p[2] = 0;
+	// // normalize(dt->ob[8].p);
+	// dt->ob[8].p[3] = 100;
+
+
+
+
+>>>>>>> parent of 862c7f6... pre norminette owrking
 	if (close(fd) == -1)
 		return (-1);
 	return (0);
