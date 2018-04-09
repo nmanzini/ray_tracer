@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/09 01:00:23 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/09 13:32:17 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,7 +179,7 @@ float	light_enc_dist(t_pv *enc, t_pv *lig)
 	return (vec_len(light_enc));
 }
 
-void	update_color(t_pix *px, t_obj *ob)
+void	update_color(t_pix *px, t_obj *ob, int i)
 {
 	float			projection;
 	float			ra;
@@ -191,14 +191,14 @@ void	update_color(t_pix *px, t_obj *ob)
 	if (projection < 0)
 		projection = 0;
 	light_dist = light_enc_dist(px->enc, px->lig);
-	light_factor = 50 / pow(0.5 * light_dist, 2);
+	light_factor = 50 / pow(0.2 * light_dist, 2);
 	if (light_factor > 1)
 		light_factor = 1;
 	ambient = 0.10;
 	ra = projection * (1 - ambient) * light_factor + ambient;
-	if (px->shadow)
+	if (px->shadow == 1)
 		ra = ambient;
-	px->color = rgb_to_ui(ra * ob->rgb[0], ra * ob->rgb[1], ra * ob->rgb[2]);
+	px->color = rgb_to_ui(ra * ob[i].rgb[0], ra * ob[i].rgb[1], ra * ob[i].rgb[2]);
 }
 
 float	check_obj_temp_t(t_pv *ray, t_pv *enc, t_obj ob)
@@ -234,6 +234,7 @@ int		loop_obj_shadow(t_pv *enc, t_pv *lig, t_obj *ob, int exc)
 
 	light_dist = light_enc_dist(enc, lig);
 	i = -1;
+	temp_t = 0;
 	while (ob[++i].type != 'n')
 	{
 		if (i != exc)
@@ -253,7 +254,7 @@ void	color_point(t_data *dt, int i)
 
 	update_light_v(dt->px->enc, dt->px->lig);
 	dt->px->shadow = loop_obj_shadow(dt->px->enc, dt->px->lig, dt->ob, i);
-	update_color(dt->px, &dt->ob[i]);
+	update_color(dt->px, dt->ob, i);
 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
 }
 
@@ -303,24 +304,31 @@ float	ray_cylinder_encounter(t_pv cyl, float r, t_pv *ray, t_pv *enc)
 	float		b;
 	float		c;
 	float		t;
-	float		dp[3];
-	float		dp_va;
-	float		dp_vava[3];
-	float		dpdp_vava[3];
+	float		Dp[3];
+	float		Dp_Va;
+	float		Dp_VaVa[3];
+	float		DpDp_VaVa[3];
 	float		v_va;
 	float		v_vava[3];
 	float		vv_vava[3];
 
-	vec_sub(ray->p, cyl.p, dp);
-	dp_va = dot_prod(dp, cyl.v);
-	vec_mult(cyl.v, dp_va, dp_vava);
-	vec_sub(dp, dp_vava, dpdp_vava);
+	// Dp = ∆p = p - pa 
+	vec_sub(ray->p, cyl.p, Dp);
+	// Dp_Va = (∆p,va)
+	Dp_Va = dot_prod(Dp, cyl.v);
+	// Dp_VaVa = (∆p,va) * va
+	vec_mult(cyl.v, Dp_Va, Dp_VaVa);
+	// DpDp_VaVa =  ∆p - (∆p,va) * va
+	vec_sub(Dp, Dp_VaVa, DpDp_VaVa);
+	// v_va = (v,va)
 	v_va = dot_prod(ray->v, cyl.v);
+	// v_vava = (v,va) * va
 	vec_mult(cyl.v, v_va, v_vava);
+	// vv_vava = v - (v,va) * va
 	vec_sub(ray->v, v_vava, vv_vava);
 	a = dot_prod(vv_vava, vv_vava);
-	b = 2 * dot_prod(vv_vava, dpdp_vava);
-	c = dot_prod(dpdp_vava, dpdp_vava) - (r * r);
+	b = 2 * dot_prod(vv_vava, DpDp_VaVa);
+	c = dot_prod(DpDp_VaVa, DpDp_VaVa) - (r*r);
 	t = solve_quadratic(a, b, c);
 	if (t == 0)
 		return (0);

@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/09 00:08:38 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/09 00:08:46 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/09 13:21:20 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,6 +194,39 @@ float	ray_cylinder_encounter(t_pv cyl, float r, t_pv *ray, t_pv *enc)
 	a = dot_prod(vv_vava, vv_vava);
 	b = 2 * dot_prod(vv_vava, DpDp_VaVa);
 	c = dot_prod(DpDp_VaVa, DpDp_VaVa) - (r*r);
+	t = solve_quadratic(a, b, c);
+	if (t == 0)
+		return (0);
+	update_encounter_p(t, ray, enc);
+	min_perp_vec(enc->p, cyl.v, cyl.p, enc->v);
+	normalize(enc->v);
+	return (t);
+}
+
+float	ray_cylinder_encounter(t_pv cyl, float r, t_pv *ray, t_pv *enc)
+{
+	float		a;
+	float		b;
+	float		c;
+	float		t;
+	float		dp[3];
+	float		dp_va;
+	float		dp_vava[3];
+	float		dpdp_vava[3];
+	float		v_va;
+	float		v_vava[3];
+	float		vv_vava[3];
+
+	vec_sub(ray->p, cyl.p, dp);
+	dp_va = dot_prod(dp, cyl.v);
+	vec_mult(cyl.v, dp_va, dp_vava);
+	vec_sub(dp, dp_vava, dpdp_vava);
+	v_va = dot_prod(ray->v, cyl.v);
+	vec_mult(cyl.v, v_va, v_vava);
+	vec_sub(ray->v, v_vava, vv_vava);
+	a = dot_prod(vv_vava, vv_vava);
+	b = 2 * dot_prod(vv_vava, dpdp_vava);
+	c = dot_prod(dpdp_vava, dpdp_vava) - (r * r);
 	t = solve_quadratic(a, b, c);
 	if (t == 0)
 		return (0);
