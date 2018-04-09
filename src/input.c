@@ -76,29 +76,6 @@ int		write_obj(t_data *dt, int fd, char *line, int *i_obj)
 	{
 		if (line[2] == '0')
 			return (0);
-		// *i_obj = *i_obj + 1;
-		// dt->ob[*i_obj].type = 'o';
-		// get_next_line(fd, &line2);
-		// list = ft_strsplit(line2, ',');
-		// while (i < 3)
-		// {
-		// 	dt->ob[*i_obj].vp.p[i] = ft_atoi(list[i]);
-		// 	dt->ob[*i_obj].vp.v[i] = ft_atoi(list[i + 3]);
-		// 	i++;
-		// }
-		// normalize(dt->ob[*i_obj].vp.v);
-		// free(line2);
-		// free_list_str(list);
-		// get_next_line(fd, &line2);
-		// list = ft_strsplit(line2, ',');
-		// i = 0;
-		// while (i < 3)
-		// {
-		// 	dt->ob[*i_obj].rgb[i] = ft_atoi(list[i]);
-		// 	i++;
-		// }
-		// free(line2);
-		// free_list_str(list);
 		*i_obj = *i_obj + 1;
 		dt->ob[*i_obj].type = 'o';
 		get_next_line(fd, &line2);
