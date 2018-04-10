@@ -6,7 +6,7 @@
 #    By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/29 17:51:18 by nmanzini          #+#    #+#              #
-#    Updated: 2018/04/10 18:54:29 by nmanzini         ###   ########.fr        #
+#    Updated: 2018/04/10 21:42:17 by nmanzini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,16 @@ SRCS = 	./src/main.c 				\
 		./src/colors_utils.c		\
 		./src/data_init.c  			\
 		./src/input.c				\
+		./src/rotate.c				\
+		./src/vect_operations.c 	\
+		./src/vect_update.c 		\
+		./src/vect_algebra.c 		\
+		./src/obj_loops.c 			\
+		./src/obj_utilities.c  		\
+		./src/obj_ray_encounter.c	\
+		./src/obj_read.c			\
+		./src/obj_read2.c			\
+		./src/call_keys_camera.c	\
 
 # MLX_FLAGS = -lmlx -framework Opengl -framework Appkit
 # MLX_FLAGS_MAC_AIR =  -I /usr/X11/include -g -L /usr/X11/lib -lX11 -lmlx -lXext $(MLX_FLAGS) 

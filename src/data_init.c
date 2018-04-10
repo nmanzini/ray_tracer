@@ -6,11 +6,11 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/10 18:53:58 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/10 21:46:31 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "RTv1.h"
+#include "rtv1.h"
 
 t_mlx	*mlx_data_init_return(t_mlx *md)
 {
@@ -40,7 +40,7 @@ void	cam_data_update(t_cam *ca)
 	ca->scr_s[1] = ca->scr_s[0] / (float)ca->res[0] * ca->res[1];
 }
 
-void	*cam_data_init(t_cam *ca)
+t_cam	*cam_data_init(t_cam *ca)
 {
 	static t_cam	actual_ca;
 
@@ -49,11 +49,17 @@ void	*cam_data_init(t_cam *ca)
 	ca->res[0] = WIDTH / 4;
 	ca->res[1] = HEIGHT / 4;
 	ca->fov = 90;
+	ca->cam_p[0] = 0;
+	ca->cam_p[1] = 0;
+	ca->cam_p[2] = -10;
+	ca->cam_a[0] = 0;
+	ca->cam_a[1] = 0;
+	ca->cam_a[2] = 0;
 	cam_data_update(ca);
 	return (ca);
 }
 
-void	*pix_data_init(t_pix *px)
+t_pix	*pix_data_init(t_pix *px)
 {
 	static t_pix	actual_px;
 	static t_pv		actual_ray;

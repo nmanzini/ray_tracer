@@ -6,11 +6,11 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 14:16:18 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/10 18:20:42 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/10 21:46:27 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "RTv1.h"
+#include "rtv1.h"
 
 unsigned int	rgb_to_ui(int red, int green, int blue)
 {
