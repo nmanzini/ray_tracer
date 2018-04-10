@@ -6,14 +6,14 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/09 00:08:38 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/09 13:21:20 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/09 15:06:20 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 /*
-	** 
-	*/
+** 
+*/
 
 void	print_vector(float *vec, char *str)
 {

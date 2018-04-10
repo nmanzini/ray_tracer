@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/08 23:40:30 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/10 14:24:42 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,18 +20,25 @@ float	float_abs(float f)
 		return (f);
 }
 
+/*
+** print a 3 dim vector of floats and its length
+*/
+
+
 void	print_vector(float *vec, char *str)
 {
-	// print a 3 dim vector of floats and its length
 	float len;
 
 	len = sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
 	printf("x %f, y %f, z %f len %f \"%s\"\n",vec[0], vec[1], vec[2], len, str);
 }
 
+/*
+** normilizes a 3 dim array of floats.
+*/
+
 void	normalize(float *vec)
 {
-	// normilizes a 3 dim array of floats.
 	float len;
 
 	len = sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2]);
@@ -43,26 +50,37 @@ void	normalize(float *vec)
 	}
 }
 
+/*
+** takes the point of the camera and gives it to the pix struct
+*/
+
 void	update_ray_p(float *cam_p, t_pv *ray)
 {
-	// takes the point of the camera and gives it to the pix struct
 	ray->p[0] = cam_p[0];
 	ray->p[1] = cam_p[1];
 	ray->p[2] = cam_p[2];
 }
 
+/*
+** create the ray vector based on the screen size, resolution and wich pixel
+** we are analyzing
+*/
+
 void	update_ray_v(int *res, int *pixel, float *scr_s, t_pv *ray)
 {	
-	// create the ray vector based on the screen size, resolution and wich ixel we are analyzing
+	// 
 	ray->v[0] = - (scr_s[0] / 2) + (scr_s[0] / (res[0] - 1) * pixel[0]);
 	ray->v[1] = + (scr_s[1] / 2) - (scr_s[1] / (res[1] - 1) * pixel[1]);
 	ray->v[2] = + (scr_s[2]);
 	normalize (ray->v);
 }
 
+/*
+** returns the dot product
+*/
+
 float dot_prod(float *vec1, float *vec2)
 {
-	// returns the dot product
 	float	result;
 	int		i;
 
@@ -74,33 +92,45 @@ float dot_prod(float *vec1, float *vec2)
 	return (result);
 }
 
+/*
+** multiplies a vector by a scalar returned in result
+*/
+
 void	vec_mult(float *vect, float scalar, float *result)
 {
-	// multiplies a vector by a scalar returned in result
 	result[0] = scalar * vect[0];
 	result[1] = scalar * vect[1]; 
 	result[2] = scalar * vect[2]; 
 }
 
+/*
+** subtraction between two vector passed into the resul vector
+*/
+
 void	vec_sub(float *vect1, float *vect2, float *result)
 {
-	// subtraction between two vector passed into the resul vector
 	result[0] = vect1[0] - vect2[0];
 	result[1] = vect1[1] - vect2[1];
 	result[2] = vect1[2] - vect2[2];
 }
 
+/*
+** addition between two vector passed into the resul vector
+*/
+
 void	vec_add(float *vect1, float *vect2, float *result)
 {
-	// addition between two vector passed into the resul vector
 	result[0] = vect1[0] + vect2[0];
 	result[1] = vect1[1] + vect2[1];
 	result[2] = vect1[2] + vect2[2];
 }
 
+/*
+** addition between two vector passed into the resul vector
+*/
+
 void	vec_neg(float *vect, float *result)
 {
-	// addition between two vector passed into the resul vector
 	result[0] = - vect[0];
 	result[1] = - vect[1];
 	result[2] = - vect[2];
@@ -111,41 +141,44 @@ float	vec_len(float *vect)
 	return (sqrt(float_abs(pow(vect[0],2) + pow(vect[1],2) + pow(vect[2],2))));
 }
 
+/*
+** Minimal perpendicular vector between a point and 
+*/
+
 void	min_perp_vec(float *point, float *vector, float *origin, float *normal)
 {
-	// Minimal perpendicular vector between a point and a line
-
 	float pa[3];
 	float pa_d;
 	float pa_dd[3];
 	float neg_a[3];
 	float neg_a_minus_pa_dd[3];
 
-	// (P-A)
 	vec_sub(point,origin,pa);
-	// (P-A).D)
 	pa_d = dot_prod(pa,vector);
-	// ((P-A).D)D
 	vec_mult(vector, pa_d, pa_dd);
-	// -A
 	vec_neg(origin,neg_a);
-	// - A - ((P-A).D)D
 	vec_sub(neg_a, pa_dd, neg_a_minus_pa_dd);
-	// - A - ((P-A).D)D + P
 	vec_add(neg_a_minus_pa_dd, point, normal);
 }
 
+/*
+** given an encounter struct the ray and a distance,
+** updates the poin of intersection
+*/
+
 void	update_encounter_p(float t, t_pv *ray, t_pv *enc)
 {
-	// given an encounter struct the ray and a distance, updates the poin of intersection
 	enc->p[0] = ray->p[0] + t * ray->v[0];
 	enc->p[1] = ray->p[1] + t * ray->v[1];
 	enc->p[2] = ray->p[2] + t * ray->v[2];
 }
 
+/*
+** updates the light vector toward the encounter point, and normalizes it
+*/
+
 void	update_light_v(t_pv *enc, t_pv *lig)
 {
-	// updates the light vector toward the encounter point, and normalizes it
 	lig->v[0] = -lig->p[0] + enc->p[0];
 	lig->v[1] = -lig->p[1] + enc->p[1];
 	lig->v[2] = -lig->p[2] + enc->p[2];
@@ -169,8 +202,6 @@ void	update_color(t_pix *px, t_obj *ob)
 	float			light_dist;
 	float				ambient;
 
-
-
 	projection = - dot_prod(px->enc->v, px->lig->v);
 	if (projection < 0)
 		projection = 0;
@@ -189,7 +220,7 @@ void	update_color(t_pix *px, t_obj *ob)
 		ra = ambient;
 
 	px->color = rgb_to_ui(ra * ob->rgb[0],ra * ob->rgb[1],ra * ob->rgb[2]);
-	}
+}
 
 float check_obj_temp_t(t_pv *ray, t_pv *enc, t_obj ob)
 {
@@ -202,11 +233,11 @@ float check_obj_temp_t(t_pv *ray, t_pv *enc, t_obj ob)
 	}
 	else if (ob.type == 'o')
 	{
-		temp_t = ray_cone_encounter(ob.vp, 15, ray, enc);
+		temp_t = ray_cone_encounter(ob.vp, ob.p[0], ray, enc);
 	}
 	else if (ob.type == 'y')
 	{
-		temp_t = ray_cylinder_encounter(ob.vp, 1, ray, enc);
+		temp_t = ray_cylinder_encounter(ob.vp, ob.p[0], ray, enc);
 	}
 	else if (ob.type == 'p')
 	{
@@ -288,68 +319,6 @@ void ray_trace(t_data	*dt)
 			rotate_v(dt->px->ray->v, dt->ca->cam_a);
 
 			loop_trough_objs(dt);
-		}
-	}
-}
-
-void ray_trace_old(t_data	*dt)
-{
-	float	t;
-	float	temp_t;
-
-	cam_data_update(dt->ca);
-	update_ray_p(dt->ca->cam_p, dt->px->ray);
-	dt->px->pix_p[1] = -1;
-	while (++dt->px->pix_p[1] < dt->ca->res[1])
-	{
-		dt->px->pix_p[0] = -1;
-		while (++dt->px->pix_p[0] < dt->ca->res[0])
-		{
-			t = 1024;
-			update_ray_v(dt->ca->res,dt->px->pix_p,dt->ca->scr_s,dt->px->ray);
-			rotate_v(dt->px->ray->v, dt->ca->cam_a);
-			
-			// temp_t = ray_cone_encounter(dt->sc->cone, 15, dt->px->ray, dt->px->enc);
-			// if (temp_t < t && temp_t != 0)
-			// {
-			// 	t = temp_t;
-			// 	color_point(dt, t, WHITE);
-			// }
-
-			// temp_t = ray_sphere_encounter(dt->sc->sphere, dt->px->ray, dt->px->enc);
-			// if (temp_t < t && temp_t != 0)
-			// {
-			// 	t = temp_t;
-			// 	color_point(dt, t, WHITE);
-			// }
-
-			// temp_t = ray_plane_encounter(dt->sc->plane ,dt->px->ray, dt->px->enc);
-			// if (temp_t < t && temp_t != 0)
-			// {
-			// 	t = temp_t;
-			// 	color_point(dt, t, WHITE);
-			// }
-
-			// temp_t = ray_cylinder_encounter(dt->sc->cylinder, 2, dt->px->ray, dt->px->enc);
-			// if (temp_t < t && temp_t != 0)
-			// {
-			// 	t = temp_t;
-			// 	color_point(dt, t, WHITE);
-			// }
-
-			// temp_t = ray_box_encounter(dt->sc->box, dt->px->ray, dt->px->enc);
-			// if (temp_t < t && temp_t != 0)
-			// {
-			// 	t = temp_t;
-			// 	color_point(dt, WHITE);
-			// }
-			
-			// temp_t = ray_surface_encounter(dt->sc->surface, dt->px->ray, dt->px->enc);
-			// if (temp_t < t && temp_t != 0)
-			// {
-			// 	t = temp_t;
-			// 	color_point(dt, WHITE);
-			// }
 		}
 	}
 }
