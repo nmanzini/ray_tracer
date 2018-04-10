@@ -6,11 +6,15 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/05 19:40:05 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/10 14:42:07 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/10 18:32:51 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RTv1.h"
+
+/*
+** frees a list of strings
+*/
 
 void	free_list_str(char **list)
 {
@@ -24,6 +28,10 @@ void	free_list_str(char **list)
 	free(list[i]);
 	free(list);
 }
+
+/*
+** check the number of objs in the file
+*/
 
 int		check_file(char *path)
 {
@@ -49,6 +57,10 @@ int		check_file(char *path)
 	return (obj_n);
 }
 
+/*
+** reads the third line of the obj and fills the rgb values with it
+*/
+
 void	read_color(t_data *dt, int fd, int *i_obj)
 {
 	int		i;
@@ -66,6 +78,10 @@ void	read_color(t_data *dt, int fd, int *i_obj)
 	free(line2);
 	free_list_str(list);
 }
+
+/*
+** reads and fills a a sphere obj
+*/
 
 void	read_s(t_data *dt, int fd, int *i_obj)
 {
@@ -87,6 +103,10 @@ void	read_s(t_data *dt, int fd, int *i_obj)
 	free_list_str(list);
 	read_color(dt, fd, i_obj);
 }
+
+/*
+** reads and fills a cone obj
+*/
 
 void	read_o(t_data *dt, int fd, int *i_obj)
 {
@@ -112,6 +132,10 @@ void	read_o(t_data *dt, int fd, int *i_obj)
 	read_color(dt, fd, i_obj);
 }
 
+/*
+** reads and fills a cylinder obj
+*/
+
 void	read_y(t_data *dt, int fd, int *i_obj)
 {
 	int		i;
@@ -136,6 +160,10 @@ void	read_y(t_data *dt, int fd, int *i_obj)
 	read_color(dt, fd, i_obj);
 }
 
+/*
+** reads and fills a plane obj
+*/
+
 void	read_p(t_data *dt, int fd, int *i_obj)
 {
 	int		i;
@@ -158,6 +186,10 @@ void	read_p(t_data *dt, int fd, int *i_obj)
 	read_color(dt, fd, i_obj);
 }
 
+/*
+** reads and fills a camera obj
+*/
+
 void	read_c(t_data *dt, int fd, int *i_obj)
 {
 	int		i;
@@ -177,6 +209,10 @@ void	read_c(t_data *dt, int fd, int *i_obj)
 	free_list_str(list);
 }
 
+/*
+** reads and fills a light obj
+*/
+
 void	read_l(t_data *dt, int fd, int *i_obj)
 {
 	int		i;
@@ -194,6 +230,10 @@ void	read_l(t_data *dt, int fd, int *i_obj)
 	free(line2);
 	free_list_str(list);
 }
+
+/*
+** read what kind of onj and calls the reigh reading function
+*/
 
 int		write_obj(t_data *dt, int fd, char *line, int *i_obj)
 {
@@ -216,6 +256,10 @@ int		write_obj(t_data *dt, int fd, char *line, int *i_obj)
 		read_l(dt, fd, i_obj);
 	return (0);
 }
+
+/*
+** loop trough every line, and if valid it write it into a obj
+*/
 
 int		loop_trough(char *file_path, t_data *dt)
 {
@@ -241,6 +285,10 @@ int		loop_trough(char *file_path, t_data *dt)
 	return (0);
 }
 
+/*
+** prepare the obj list and call for the loop to read trough the file
+*/
+
 int		read_file(char *path, t_data *dt, int obj_num)
 {
 	dt->ob = (t_obj*)malloc(sizeof(t_obj) * (obj_num + 1));
@@ -251,6 +299,10 @@ int		read_file(char *path, t_data *dt, int obj_num)
 	loop_trough(path, dt);
 	return (0);
 }
+
+/*
+** general input reading function
+*/
 
 int		get_input(t_data *dt, int ac, char **av)
 {

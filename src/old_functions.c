@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/09 00:08:38 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/09 15:06:20 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/10 18:22:37 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,4 +300,37 @@ void	min_perp_vec(float *point, float *vector, float *origin, float *normal)
 	vec_sub(neg_a, pa_dd, neg_a_minus_pa_dd);
 	// - a - ((P-a).D)D + P
 	vec_add(neg_a_minus_pa_dd, point, normal);
+}
+
+float	solve_quadratic(float a, float b, float c)
+{
+	float det;
+	float dist;
+	float t[2];
+
+	det = pow(b, 2) - (4 * a * c);
+	if (det < 0)
+		return (0);
+	else if (det == 0)
+	{
+		dist = -(b / (2 * a));
+		if (dist < 0)
+			return (0);
+	}
+	else if (a == 0)
+		return (0);
+	else
+	{
+		t[0] = (-b - sqrt(det)) / (2 * a);
+		t[1] = (-b + sqrt(det)) / (2 * a);
+		if (t[0] < t[1] && t[0] > 0)
+			return (t[0]);
+		else if (t[1] < t[0] && t[1] > 0)
+			return (t[1]);
+		else if (t[0] > 0)
+			return (t[0]);
+		else if (t[1] > 0)
+			return (t[1]);
+	}
+	return (0);
 }

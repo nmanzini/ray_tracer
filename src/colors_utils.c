@@ -6,20 +6,11 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 14:16:18 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/08 22:58:29 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/10 18:20:42 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RTv1.h"
-
-void			fractal_color(t_data *dt, int x, int y, int iter)
-{
-	int				slices;
-	int				max_local;
-	unsigned int	color;
-
-	// fill_pixel(dt->md, x, y, dt->cf->i_to_c[dt->cf->c_flag](dt, iter));
-}
 
 unsigned int	rgb_to_ui(int red, int green, int blue)
 {

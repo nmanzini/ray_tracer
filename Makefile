@@ -6,48 +6,61 @@
 #    By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/29 17:51:18 by nmanzini          #+#    #+#              #
-#    Updated: 2018/04/08 22:23:02 by nmanzini         ###   ########.fr        #
+#    Updated: 2018/04/10 18:43:43 by nmanzini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = RTv1
 
-SRC = 	./src/main.c 				\
+SRCS = 	./src/main.c 				\
 		./src/call_keys_general.c	\
 		./src/mlx_utils.c			\
 		./src/colors_utils.c		\
 		./src/data_init.c  			\
 		./src/input.c				\
 
-OBJ = $(SRC:.c=.o)
+# MLX_FLAGS = -lmlx -framework Opengl -framework Appkit
 
-LIBFT = libft/libft.a
+# MLX_FLAGS_MAC_AIR =  -I /usr/X11/include -g -L /usr/X11/lib -lX11 -lmlx -lXext $(MLX_FLAGS) 
 
-HEADER = ./src/RTv1.h
+INCLUDES = rtv1.h keys.h mlx_constants.h
 
-W_FLAGS = -Wall -Werror -Wextra
+OBJ = $(SRCS:%.c=%.o)
 
-MLX_FLAGS = -lmlx -framework Opengl -framework Appkit
+LFTDIR = libft/
 
-MLX_FLAGS_MAC_AIR =  -I /usr/X11/include -g -L /usr/X11/lib -lX11 -lmlx -lXext $(MLX_FLAGS) 
+LMLXDIR = minilibx_macos/
+LIBFT = libft.a
+LIBMLX = libmlx.a
+FT = ft
+MLX = mlx
+MAKE = makemake
+FLAGS = -Wall -Wextra -Werror 
+# Add before -ggdb to find out where segfault is
+SEGFAULT = -fsanitize=address 
+FRAMEWORK = -framework OpenGL -framework AppKit
 
-all: $(NAME)
+all : $(NAME)
 
-$(OBJ): %.o: %.c
-		-@gcc -c -I libft/ $< -o $@
+$(NAME): $(OBJ) $(LFTDIR)$(LIBFT) $(LMLXDIR)$(LIBMLX)
+	-@gcc $(FLAGS) -o $(NAME) $(SEGFAULT) -ggdb $(OBJ) -I$(LFTDIR) -L$(LFTDIR) -l$(FT) \
+	 -I$(LMLXDIR) -L$(LMLXDIR) -l$(MLX) \
+	 $(FRAMEWORK)
+	-@echo $(NAME) Ready
 
-$(LIBFT):
-	-@ make -C libft 
+%.o: %.c $(INCLUDES)
+	-@gcc $(FLAGS) -I$(LFTDIR) -I$(LMLXDIR) -c $(SRCS)
 
-$(NAME): $(LIBFT) $(OBJ)
-	-@ gcc $(MLX_FLAGS)  $(OBJ) $(LIBFT) -o $(NAME)
+$(LFTDIR)$(LIBFT):
+	$(MAKE) -C $(LFTDIR) $(LIBFT)
+
+$(LMLXDIR)$(LIBMLX):
+	$(MAKE) -C $(LMLXDIR) $(LIBMLX)
 
 clean:
-	-@ /bin/rm -f $(OBJ)
-	-@ make -C libft clean
+	-@/bin/rm -f $(OBJ)
 
 fclean: clean
-	-@ /bin/rm -f $(NAME)
-	-@ make -C libft fclean
+	-@/bin/rm -f $(NAME)
 
 re: fclean all

@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/10 15:18:17 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/10 17:40:41 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	update_ray_p(float *cam_p, t_pv *ray)
 ** we are analyzing
 */
 
-void	update_ray_v(int *res, int *pixel, float *scr_s, t_pv *ray)
+void	updt_ray_v(int *res, int *pixel, float *scr_s, t_pv *ray)
 {
 	ray->v[0] = -(scr_s[0] / 2) + (scr_s[0] / (res[0] - 1) * pixel[0]);
 	ray->v[1] = +(scr_s[1] / 2) - (scr_s[1] / (res[1] - 1) * pixel[1]);
@@ -123,7 +123,10 @@ void	vec_neg(float *vect, float *result)
 
 float	vec_len(float *vect)
 {
-	return (sqrt(float_abs(pow(vect[0], 2) + pow(vect[1], 2) + pow(vect[2], 2))));
+	float len2;
+
+	len2 = float_abs(pow(vect[0], 2) + pow(vect[1], 2) + pow(vect[2], 2));
+	return (sqrt(len2));
 }
 
 /*
@@ -170,6 +173,10 @@ void	update_light_v(t_pv *enc, t_pv *lig)
 	normalize(lig->v);
 }
 
+/*
+** return the distance between ligth point and encounter point
+*/
+
 float	light_enc_dist(t_pv *enc, t_pv *lig)
 {
 	float light_enc[3];
@@ -178,21 +185,24 @@ float	light_enc_dist(t_pv *enc, t_pv *lig)
 	return (vec_len(light_enc));
 }
 
+/*
+** update the color in the pixel based on the attack angle, ligth distance
+** power, light power and ambient light
+*/
+
 void	update_color(t_pix *px, t_obj *ob)
 {
 	float			projection;
 	float			ra;
 	float			light_factor;
 	float			light_power;
-	float			light_dist;
 	float			ambient;
 
 	projection = -dot_prod(px->enc->v, px->lig->v);
 	if (projection < 0)
 		projection = 0;
 	light_power = 150;
-	light_dist = light_enc_dist(px->enc, px->lig);
-	light_factor = light_power / pow(0.5 * light_dist, 2);
+	light_factor = light_power / pow(0.5 * light_enc_dist(px->enc, px->lig), 2);
 	if (light_factor > 1)
 		light_factor = 1;
 	ambient = 0.10;
@@ -201,6 +211,10 @@ void	update_color(t_pix *px, t_obj *ob)
 		ra = ambient;
 	px->color = rgb_to_ui(ra * ob->rgb[0], ra * ob->rgb[1], ra * ob->rgb[2]);
 }
+
+/*
+** returns the encounter of a ray and a objec, updates the encounter vector
+*/
 
 float	check_obj_temp_t(t_pv *ray, t_pv *enc, t_obj ob)
 {
@@ -218,7 +232,12 @@ float	check_obj_temp_t(t_pv *ray, t_pv *enc, t_obj ob)
 	return (temp_t);
 }
 
-int	loop_obj_shadow(t_pv *enc, t_pv *lig, t_obj *ob, int exc)
+/*
+** loops trough objs to check if they are in between the object and
+** a source of light,
+*/
+
+int		loop_obj_shadow(t_pv *enc, t_pv *lig, t_obj *ob, int exc)
 {
 	int		i;
 	float	temp_t;
@@ -237,6 +256,11 @@ int	loop_obj_shadow(t_pv *enc, t_pv *lig, t_obj *ob, int exc)
 	return (0);
 }
 
+/*
+** generates some variable for the update color functions
+** and fill a pixel with that colour
+*/
+
 void	color_point(t_data *dt, int i)
 {
 	float	dist;
@@ -249,6 +273,10 @@ void	color_point(t_data *dt, int i)
 	update_color(dt->px, &dt->ob[i]);
 	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
 }
+
+/*
+**	loop trought objects and color if their t is less than the one before 
+*/
 
 void	loop_trough_objs(t_data *dt)
 {
@@ -269,6 +297,10 @@ void	loop_trough_objs(t_data *dt)
 	}
 }
 
+/*
+** generate rays and call for a loop of all the objs to chekck if they hit
+*/
+
 void	ray_trace(t_data *dt)
 {
 	float	t;
@@ -282,38 +314,60 @@ void	ray_trace(t_data *dt)
 		dt->px->pix_p[0] = -1;
 		while (++dt->px->pix_p[0] < dt->ca->res[0])
 		{
-			update_ray_v(dt->ca->res, dt->px->pix_p, dt->ca->scr_s, dt->px->ray);
+			updt_ray_v(dt->ca->res, dt->px->pix_p, dt->ca->scr_s, dt->px->ray);
 			rotate_v(dt->px->ray->v, dt->ca->cam_a);
 			loop_trough_objs(dt);
 		}
 	}
 }
 
-float	ray_cylinder_encounter(t_pv cyl, float r, t_pv *ray, t_pv *enc)
+/*
+** function for cylinder
+*/
+
+void	get_dpdp_vava(t_pv cyl, t_pv *ray, float *dd_vava)
 {
-	float		a;
-	float		b;
-	float		c;
-	float		t;
-	float		dp[3];
-	float		dp_va;
+	float		d[3];
+	float		d_va;
 	float		dp_vava[3];
-	float		dpdp_vava[3];
+
+	vec_sub(ray->p, cyl.p, d);
+	d_va = dot_prod(d, cyl.v);
+	vec_mult(cyl.v, d_va, dp_vava);
+	vec_sub(d, dp_vava, dd_vava);
+}
+
+/*
+** function for cylinder
+*/
+
+void	get_vv_vava(t_pv cyl, t_pv *ray, float *vv_vava)
+{
 	float		v_va;
 	float		v_vava[3];
-	float		vv_vava[3];
 
-	vec_sub(ray->p, cyl.p, dp);
-	dp_va = dot_prod(dp, cyl.v);
-	vec_mult(cyl.v, dp_va, dp_vava);
-	vec_sub(dp, dp_vava, dpdp_vava);
 	v_va = dot_prod(ray->v, cyl.v);
 	vec_mult(cyl.v, v_va, v_vava);
 	vec_sub(ray->v, v_vava, vv_vava);
-	a = dot_prod(vv_vava, vv_vava);
-	b = 2 * dot_prod(vv_vava, dpdp_vava);
-	c = dot_prod(dpdp_vava, dpdp_vava) - (r * r);
-	t = solve_quadratic(a, b, c);
+}
+
+/*
+** return cylinder encounter distance, and update the encounter vector
+*/
+
+float	ray_cylinder_encounter(t_pv cyl, float r, t_pv *ray, t_pv *enc)
+{
+	float		q[3];
+	float		t;
+	float		dd_vava[3];
+	float		vv_vava[3];
+
+	get_dpdp_vava(cyl, ray, dd_vava);
+	get_vv_vava(cyl, ray, vv_vava);
+	q[0] = dot_prod(vv_vava, vv_vava);
+	q[1] = 2 * dot_prod(vv_vava, dd_vava);
+	q[2] = dot_prod(dd_vava, dd_vava) - (r * r);
+	t = solve_quadratic(q[0], q[1], q[2]);
 	if (t == 0)
 		return (0);
 	update_encounter_p(t, ray, enc);
@@ -322,35 +376,55 @@ float	ray_cylinder_encounter(t_pv cyl, float r, t_pv *ray, t_pv *enc)
 	return (t);
 }
 
+/*
+** function for cone
+*/
+
+float	dot_mult_sub(float *vec, t_pv shape, float *xx_vava)
+{
+	float		x_vava[3];
+	float		x_va;
+
+	x_va = dot_prod(vec, shape.v);
+	vec_mult(shape.v, x_va, x_vava);
+	vec_sub(vec, x_vava, xx_vava);
+	return (x_va);
+}
+
+/*
+** get intersection of cone
+*/
+
+float	get_t_cone(t_pv cone, float *cs_sr, t_pv *ray, float *q)
+{
+	float		d[3];
+	float		d_va;
+	float		dd_vava[3];
+	float		v_va;
+	float		vv_vava[3];
+
+	vec_sub(ray->p, cone.p, d);
+	d_va = dot_mult_sub(d, cone, dd_vava);
+	v_va = dot_mult_sub(ray->v, cone, vv_vava);
+	q[0] = cs_sr[0] * dot_prod(vv_vava, vv_vava) - (cs_sr[1] * pow(v_va, 2));
+	q[1] = cs_sr[0] * dot_prod(vv_vava, dd_vava) - (cs_sr[1] * v_va * d_va);
+	q[2] = cs_sr[0] * dot_prod(dd_vava, dd_vava) - (cs_sr[1] * pow(d_va, 2));
+	return (solve_quadratic(q[0], 2 * q[1], q[2]));
+}
+
+/*
+** return distance of coune encounter, and update the encounter vector
+*/
+
 float	ray_cone_encounter(t_pv cone, int angle, t_pv *ray, t_pv *enc)
 {
-	float		a;
-	float		b;
-	float		c;
+	float		q[3];
 	float		t;
-	float		dp[3];
-	float		dp_va;
-	float		dp_vava[3];
-	float		dpdp_vava[3];
-	float		v_va;
-	float		v_vava[3];
-	float		vv_vava[3];
-	float		cos_sqr;
-	float		sin_sqr;
+	float		cs_sr[2];
 
-	vec_sub(ray->p, cone.p, dp);
-	dp_va = dot_prod(dp, cone.v);
-	vec_mult(cone.v, dp_va, dp_vava);
-	vec_sub(dp, dp_vava, dpdp_vava);
-	v_va = dot_prod(ray->v, cone.v);
-	vec_mult(cone.v, v_va, v_vava);
-	vec_sub(ray->v, v_vava, vv_vava);
-	cos_sqr = cos(angle * PI_R) * cos(angle * PI_R);
-	sin_sqr = sin(angle * PI_R) * sin(angle * PI_R);
-	a = cos_sqr * dot_prod(vv_vava, vv_vava) - (sin_sqr * v_va * v_va);
-	b = 2 * cos_sqr * dot_prod(vv_vava, dpdp_vava) - (2 * sin_sqr * v_va * dp_va);
-	c = cos_sqr * dot_prod(dpdp_vava, dpdp_vava) - (sin_sqr * dp_va * dp_va);
-	t = solve_quadratic(a, b, c);
+	cs_sr[0] = cos(angle * PI_R) * cos(angle * PI_R);
+	cs_sr[1] = sin(angle * PI_R) * sin(angle * PI_R);
+	t = get_t_cone(cone, cs_sr, ray, q);
 	if (t == 0)
 		return (0);
 	update_encounter_p(t, ray, enc);
@@ -359,26 +433,28 @@ float	ray_cone_encounter(t_pv cone, int angle, t_pv *ray, t_pv *enc)
 	return (t);
 }
 
+/*
+** return distance of sphere encounter, and update the encounter vector
+*/
+
 float	ray_sphere_encounter(float *sphere, t_pv *ray, t_pv *enc)
 {
 	int			i;
-	float		a;
-	float		b;
-	float		c;
+	float		q[3];
 	float		b_vec[3];
 	float		length;
 	float		t;
 
-	a = 1;
+	q[0] = 1;
 	i = -1;
 	while (++i < 3)
 		b_vec[i] = ray->v[i] * (ray->p[i] - sphere[i]);
-	b = 2 * (b_vec[0] + b_vec[1] + b_vec[2]);
+	q[1] = 2 * (b_vec[0] + b_vec[1] + b_vec[2]);
 	length = pow(ray->p[0] - sphere[0], 2) +
 				pow(ray->p[1] - sphere[1], 2) +
 				pow(ray->p[2] - sphere[2], 2);
-	c = length - pow(sphere[3], 2);
-	t = solve_quadratic(a, b, c);
+	q[2] = length - pow(sphere[3], 2);
+	t = solve_quadratic(q[0], q[1], q[2]);
 	if (t == 0)
 		return (0);
 	update_encounter_p(t, ray, enc);
@@ -387,6 +463,11 @@ float	ray_sphere_encounter(float *sphere, t_pv *ray, t_pv *enc)
 	return (t);
 }
 
+/*
+** solve quadratic function, return zero if no solutions
+** returns the minor positive
+*/
+
 float	solve_quadratic(float a, float b, float c)
 {
 	float det;
@@ -394,33 +475,31 @@ float	solve_quadratic(float a, float b, float c)
 	float t[2];
 
 	det = pow(b, 2) - (4 * a * c);
-	if (det < 0)
-		return (0);
-	else if (det == 0)
+	if (det == 0 && a != 0)
 	{
 		dist = -(b / (2 * a));
-		if (dist < 0)
-			return (0);
+		if (dist > 0)
+			return (dist);
 	}
-	else if (a == 0)
-		return (0);
-	else
+	else if (det > 0 && a != 0)
 	{
 		t[0] = (-b - sqrt(det)) / (2 * a);
 		t[1] = (-b + sqrt(det)) / (2 * a);
 		if (t[0] < t[1] && t[0] > 0)
-			dist = t[0];
+			return (t[0]);
 		else if (t[1] < t[0] && t[1] > 0)
-			dist = t[1];
+			return (t[1]);
 		else if (t[0] > 0)
-			dist = t[0];
+			return (t[0]);
 		else if (t[1] > 0)
-			dist = t[1];
-		else
-			return (0);
+			return (t[1]);
 	}
-	return (dist);
+	return (0);
 }
+
+/*
+** return distance encounter of a ray and a plane, updates he enc vector
+*/
 
 float	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc)
 {

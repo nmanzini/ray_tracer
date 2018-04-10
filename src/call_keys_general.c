@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:02:37 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/03 20:52:11 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/10 17:55:08 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,11 @@ void	call_keys_camera_mov(int keycode, t_data *dt)
 		ft_putendl("D		move right");
 		dt->ca->cam_p[0] += 2;
 	}
-	else if (keycode == 12)
+}
+
+void	call_keys_camera_mov2(int keycode, t_data *dt)
+{
+	if (keycode == 12)
 	{
 		ft_putendl("Q		move down");
 		dt->ca->cam_p[1] -= 2;
@@ -137,6 +141,7 @@ int		call_keys(int keycode, t_data *dt)
 	}
 	call_keys_general(keycode, dt);
 	call_keys_camera_mov(keycode, dt);
+	call_keys_camera_mov2(keycode, dt);
 	call_keys_camera_rot(keycode, dt);
 	call_keys_camera_lens(keycode, dt);
 	call_keys_resolution(keycode, dt);
