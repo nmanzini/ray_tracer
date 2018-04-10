@@ -1,1 +1,0 @@
-norminette main.c
