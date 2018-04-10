@@ -6,7 +6,7 @@
 #    By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/29 17:51:18 by nmanzini          #+#    #+#              #
-#    Updated: 2018/04/10 18:43:43 by nmanzini         ###   ########.fr        #
+#    Updated: 2018/04/10 18:54:29 by nmanzini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,6 @@ SRCS = 	./src/main.c 				\
 		./src/input.c				\
 
 # MLX_FLAGS = -lmlx -framework Opengl -framework Appkit
-
 # MLX_FLAGS_MAC_AIR =  -I /usr/X11/include -g -L /usr/X11/lib -lX11 -lmlx -lXext $(MLX_FLAGS) 
 
 INCLUDES = rtv1.h keys.h mlx_constants.h
@@ -37,7 +36,7 @@ MLX = mlx
 MAKE = makemake
 FLAGS = -Wall -Wextra -Werror 
 # Add before -ggdb to find out where segfault is
-SEGFAULT = -fsanitize=address 
+# SEGFAULT = -fsanitize=address 
 FRAMEWORK = -framework OpenGL -framework AppKit
 
 all : $(NAME)

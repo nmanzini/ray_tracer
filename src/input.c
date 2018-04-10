@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/05 19:40:05 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/10 18:32:51 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/10 18:57:55 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ int		check_file(char *path)
 
 	obj_n = 0;
 	fd = open(path, O_RDONLY);
-	ft_putendl("OPENED");
 	if (fd == -1)
 		return (0);
 	while (get_next_line(fd, &line) > 0)
@@ -53,7 +52,6 @@ int		check_file(char *path)
 	free(line);
 	if (close(fd) == -1)
 		return (0);
-	ft_putendl("CLOSED");
 	return (obj_n);
 }
 
@@ -295,7 +293,7 @@ int		read_file(char *path, t_data *dt, int obj_num)
 	dt->obj_num = obj_num;
 	dt->ob[obj_num].type = 'n';
 	ft_putnbr(obj_num);
-	ft_putstr(" objs allocated\n");
+	ft_putstr(" Objects Found\n");
 	loop_trough(path, dt);
 	return (0);
 }
@@ -322,9 +320,9 @@ int		get_input(t_data *dt, int ac, char **av)
 	}
 	else
 	{
-		ft_putstr("Reading\n");
+		ft_putstr("Reading Objects\n");
 		read_file(av[1], dt, obj_num);
 	}
-	ft_putstr(" loaded.\n");
+	ft_putstr("Objects loaded.\n");
 	return (0);
 }

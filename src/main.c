@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/10 17:40:41 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/10 18:55:25 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -568,7 +568,7 @@ int		main(int ac, char **av)
 	dt = init_data(dt);
 	if (!get_input(dt, ac, av))
 	{
-		ft_putstr("Really good indeed!!!\n");
+		ft_putstr("RTv1 starting\n");
 		dt->md = mlx_data_init_return(md);
 		display(dt);
 		mlx_key_hook(dt->md->win, call_keys, dt);
