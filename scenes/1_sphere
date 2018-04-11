@@ -1,0 +1,21 @@
+# camera, active
+# x,v,z,anglex,angley,angley
+
+c,1
+0,0,-15,0,0,0
+
+
+# light, active
+# x,y,z
+
+l,1
+5,5,-5
+
+
+# sphere, active
+# x,y,z, radius
+# color
+
+s,1
+0,0,0,2
+255,255,255

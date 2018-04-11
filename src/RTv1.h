@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/11 10:52:36 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/11 14:52:02 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ typedef struct		s_mlx_struct
 typedef struct		s_cam_struct
 {
 	int				res[2];
+	int				res_factor;
 	int				max_depth;
 	float			fov;
 	float			cam_p[3];

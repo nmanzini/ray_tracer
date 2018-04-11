@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/10 20:30:39 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/10 21:46:49 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/11 17:48:47 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	update_color(t_pix *px, t_obj *ob)
 	ambient = 0.10;
 	ra = projection * (1 - ambient) * light_factor + ambient;
 	if (px->shadow)
-		ra = ambient;
+		ra *= 0.3;
 	px->color = rgb_to_ui(ra * ob->rgb[0], ra * ob->rgb[1], ra * ob->rgb[2]);
 }
 
@@ -111,7 +111,7 @@ void	loop_trough_objs(t_data *dt)
 	float	temp_t;
 	float	t;
 
-	t = 1024;
+	t = dt->ca->max_depth;
 	i = -1;
 	while (dt->ob[++i].type != 'n')
 	{

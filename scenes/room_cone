@@ -1,0 +1,42 @@
+# camera, active
+# x,v,z,anglex,angley,angley
+
+c,1
+0,0,-40,0,0,0
+
+
+# light, active
+# x,y,z
+
+l,1
+10,10,-10
+
+
+# plane, active
+# xv,yv,zv,d
+# color
+
+p,1s
+0,1,0,-15
+100,100,100
+
+p,1
+0,-1,0,-15
+
+p,1
+1,0,0,-15
+
+p,1
+-1,0,0,-15
+
+p,1
+0,0,-1,-15
+
+
+# cone, active
+# x,y,z,vx,vy,vz,angle
+# color
+
+o,1
+0,0,0,0,1,0,20
+255,50,50

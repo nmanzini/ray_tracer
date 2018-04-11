@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:26 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/11 10:53:08 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/11 17:37:19 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int		main(int ac, char **av)
 	dt = init_data(dt);
 	if (!get_input(dt, ac, av))
 	{
-		ft_putstr("RTv1 starting\n");
+		ft_putstr("rtv1 starting\n");
 		dt->md = mlx_data_init_return(md);
 		display(dt);
 		mlx_key_hook(dt->md->win, call_keys, dt);
@@ -60,7 +60,7 @@ int		main(int ac, char **av)
 	}
 	else
 	{
-		ft_putstr("Error reading the file.\nExiting.\n");
+		ft_putstr("Error reading the file.\nExiting.\n\n");
 		exit(0);
 	}
 	return (0);

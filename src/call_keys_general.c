@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:02:37 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/10 21:46:23 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/11 15:53:34 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,21 +47,23 @@ void	call_keys_resolution(int keycode, t_data *dt)
 {
 	if (keycode == 33)
 	{
-		ft_putendl("[		smaller resolution");
-		if (dt->ca->res[0] != 16 && dt->ca->res[1] != 16)
-		{
-			dt->ca->res[0] /= 2;
-			dt->ca->res[1] /= 2;
-		}
+		ft_putendl("[		lower resolution");
+		if (dt->ca->res_factor != 64)
+			dt->ca->res_factor *= 2;
+		else
+			ft_putendl("[		minimum resolution reached");
+		dt->ca->res[0] = WIDTH / dt->ca->res_factor;
+		dt->ca->res[1] = HEIGHT / dt->ca->res_factor;
 	}
 	else if (keycode == 30)
 	{
-		ft_putendl("]		bigger resolution");
-		if (dt->ca->res[0] < WIDTH && dt->ca->res[1] < HEIGHT)
-		{
-			dt->ca->res[0] *= 2;
-			dt->ca->res[1] *= 2;
-		}
+		ft_putendl("]		higher resolution");
+		if (dt->ca->res_factor != 1)
+			dt->ca->res_factor /= 2;
+		else
+			ft_putendl("]		maximum resolution reached");
+		dt->ca->res[0] = WIDTH / dt->ca->res_factor;
+		dt->ca->res[1] = HEIGHT / dt->ca->res_factor;
 	}
 }
 

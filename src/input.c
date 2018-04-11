@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/05 19:40:05 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/10 21:46:36 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/11 17:20:49 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,17 +76,17 @@ int		get_input(t_data *dt, int ac, char **av)
 	}
 	else if (!(obj_num = check_file(av[1])))
 	{
-		ft_putstr("Invalid File\n");
+		ft_putstr("Invalid File : ");
+		ft_putendl(av[1]);
 		ft_putstr("usage: ./RTv1 scene\n");
 		return (2);
 	}
 	else
 	{
-		ft_putstr("Reading Objects\n");
+		ft_putstr("Reading Objects in file : ");
+		ft_putendl(av[1]);
 		if (read_file(av[1], dt, obj_num))
-		{
 			return (1);
-		}
 		else
 			ft_putstr("Objects loaded.\n");
 	}

@@ -6,7 +6,7 @@
 #    By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/29 17:51:18 by nmanzini          #+#    #+#              #
-#    Updated: 2018/04/11 10:57:35 by nmanzini         ###   ########.fr        #
+#    Updated: 2018/04/11 12:16:23 by nmanzini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -77,7 +77,7 @@ MLX = mlx
 MAKE = make
 FLAGS = -Wall -Wextra -Werror 
 # Add before -ggdb to find out where segfault is
-SEGFAULT = -fsanitize=address 
+# SEGFAULT = -fsanitize=address 
 FRAMEWORK = -framework OpenGL -framework AppKit
 
 all : $(NAME)
@@ -92,15 +92,17 @@ $(NAME): $(OBJ) $(LFTDIR)$(LIBFT) $(LMLXDIR)$(LIBMLX)
 	-@gcc $(FLAGS) -I$(LFTDIR) -I$(LMLXDIR) -c $(SRCS)
 
 $(LFTDIR)$(LIBFT):
-	$(MAKE) -C $(LFTDIR)$(LIBFT)
+	$(MAKE) -C $(LFTDIR)
 
 $(LMLXDIR)$(LIBMLX):
 	$(MAKE) -C $(LMLXDIR) $(LIBMLX)
 
 clean:
 	-@/bin/rm -f $(OBJ)
+	-@ make -C $(LFTDIR) clean
 
 fclean: clean
 	-@/bin/rm -f $(NAME)
+	-@ make -C $(LFTDIR) fclean
 
 re: fclean all

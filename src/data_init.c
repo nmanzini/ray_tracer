@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/10 21:46:31 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/11 17:49:32 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,10 @@ t_cam	*cam_data_init(t_cam *ca)
 	static t_cam	actual_ca;
 
 	ca = &actual_ca;
-	ca->max_depth = 1024;
-	ca->res[0] = WIDTH / 4;
-	ca->res[1] = HEIGHT / 4;
+	ca->max_depth = 2048;
+	ca->res_factor = 1;
+	ca->res[0] = WIDTH / ca->res_factor;
+	ca->res[1] = HEIGHT / ca->res_factor;
 	ca->fov = 90;
 	ca->cam_p[0] = 0;
 	ca->cam_p[1] = 0;
