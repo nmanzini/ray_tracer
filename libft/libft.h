@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/13 17:42:01 by nmanzini          #+#    #+#             */
-/*   Updated: 2017/12/14 16:42:05 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/11 10:51:26 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ t_list			*ft_lstmap(t_list *lst, t_list *(*f) (t_list *elem));
 */
 
 void			ft_putnbre(int n);
+float			ft_atof(char *str);
 
 /*
 ** get_next_line stuff

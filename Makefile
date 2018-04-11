@@ -6,11 +6,11 @@
 #    By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/29 17:51:18 by nmanzini          #+#    #+#              #
-#    Updated: 2018/04/10 21:42:17 by nmanzini         ###   ########.fr        #
+#    Updated: 2018/04/11 10:57:35 by nmanzini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = RTv1
+NAME = rtv1
 
 SRCS = 	./src/main.c 				\
 		./src/call_keys_general.c	\
@@ -27,12 +27,43 @@ SRCS = 	./src/main.c 				\
 		./src/obj_ray_encounter.c	\
 		./src/obj_read.c			\
 		./src/obj_read2.c			\
-		./src/call_keys_camera.c	\
+		./src/call_keys_camera.c
+
+# OBJ = $(SRC:.c=.o)
+
+# LIBFT = libft/libft.a
+
+# HEADER = ./src/rtv1.h
+
+# W_FLAGS = -Wall -Werror -Wextra
 
 # MLX_FLAGS = -lmlx -framework Opengl -framework Appkit
+
 # MLX_FLAGS_MAC_AIR =  -I /usr/X11/include -g -L /usr/X11/lib -lX11 -lmlx -lXext $(MLX_FLAGS) 
 
-INCLUDES = rtv1.h keys.h mlx_constants.h
+# all: $(NAME)
+
+# $(OBJ): %.o: %.c
+# 		-@gcc -c -I libft/ $< -o $@
+
+# $(LIBFT):
+# 	-@ make -C libft 
+
+# $(NAME): $(LIBFT) $(OBJ)
+# 	-@ gcc $(MLX_FLAGS)  $(OBJ) $(LIBFT) -o $(NAME)
+
+# clean:
+# 	-@ /bin/rm -f $(OBJ)
+# 	-@ make -C libft clean
+
+# fclean: clean
+# 	-@ /bin/rm -f $(NAME)
+# 	-@ make -C libft fclean
+
+# re: fclean all
+
+
+INCLUDES = rtv1.h
 
 OBJ = $(SRCS:%.c=%.o)
 
@@ -43,10 +74,10 @@ LIBFT = libft.a
 LIBMLX = libmlx.a
 FT = ft
 MLX = mlx
-MAKE = makemake
+MAKE = make
 FLAGS = -Wall -Wextra -Werror 
 # Add before -ggdb to find out where segfault is
-# SEGFAULT = -fsanitize=address 
+SEGFAULT = -fsanitize=address 
 FRAMEWORK = -framework OpenGL -framework AppKit
 
 all : $(NAME)
@@ -61,7 +92,7 @@ $(NAME): $(OBJ) $(LFTDIR)$(LIBFT) $(LMLXDIR)$(LIBMLX)
 	-@gcc $(FLAGS) -I$(LFTDIR) -I$(LMLXDIR) -c $(SRCS)
 
 $(LFTDIR)$(LIBFT):
-	$(MAKE) -C $(LFTDIR) $(LIBFT)
+	$(MAKE) -C $(LFTDIR)$(LIBFT)
 
 $(LMLXDIR)$(LIBMLX):
 	$(MAKE) -C $(LMLXDIR) $(LIBMLX)

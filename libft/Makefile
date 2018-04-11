@@ -61,7 +61,7 @@ SRC = 	./ft_atoi.c 		\
  		./ft_toupper.c 		\
  		./ft_putnbre.c		\
  		./get_next_line.c	\
- 		./ft_atof.c			\  
+ 		./ft_atof.c
 
 OBJS = $(SRC:.c=.o)
 
@@ -70,7 +70,7 @@ HDRS = libft.h
 all: $(NAME)
 
 $(NAME):
-	-@ gcc -c -Wall -Wextra -Werror -I $(HDRS) $(SRC) 
+	-@ gcc -c -Wall -Wextra -Werror -I$(HDRS) $(SRC) 
 	-@ ar rc $(NAME) $(OBJS)
 	-@ ranlib $(NAME)
 

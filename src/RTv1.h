@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/10 21:55:54 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/11 10:52:36 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,7 +177,6 @@ int					get_input(t_data *dt, int ac, char **av);
 */
 void				ray_trace(t_data	*dt);
 float				float_abs(float f);
-int					main(int ac, char **av);
 /*
 ** data_init.c
 */
