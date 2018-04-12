@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/10 20:39:13 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/10 21:46:53 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/12 13:49:35 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ float	ray_sphere_encounter(float *sphere, t_pv *ray, t_pv *enc)
 float	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc)
 {
 	float	t;
+	float	dot_result;
 
 	t = -(plane[0] * ray->p[0] + plane[1] * ray->p[1] + plane[2] * ray->p[2]
 		- plane[3]) /
@@ -105,6 +106,10 @@ float	ray_plane_encounter(float *plane, t_pv *ray, t_pv *enc)
 		enc->v[0] = plane[0];
 		enc->v[1] = plane[1];
 		enc->v[2] = plane[2];
+		if (dot_prod(ray->v, enc->v) > 0)
+		{
+			vec_neg(enc->v, enc->v);
+		}
 		normalize(enc->v);
 		return (t);
 	}

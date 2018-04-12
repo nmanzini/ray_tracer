@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/10 21:32:12 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/10 21:46:10 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/12 14:03:58 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,13 @@ int		read_color(t_data *dt, int fd, int *i_obj)
 		dt->ob[*i_obj].rgb[2] = 255;
 		return (0);
 	}
-	i = 0;
-	while (i < 3)
+	i = -1;
+	while (++i < 3)
 	{
-		dt->ob[*i_obj].rgb[i] = ft_atoi(list[i]);
-		i++;
+		if (ft_atoi(list[i]) > 255 || ft_atoi(list[i]) < 0)
+			dt->ob[*i_obj].rgb[i] = 255;
+		else
+			dt->ob[*i_obj].rgb[i] = ft_atoi(list[i]);
 	}
 	free(line2);
 	free_list_str(list);

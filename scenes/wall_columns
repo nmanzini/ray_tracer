@@ -25,7 +25,7 @@ p,1
 
 
 # cylinder, active
-# x,y,z,vx,vy,vz,angle
+# x,y,z,vx,vy,vz,radius
 # color
 
 y,1

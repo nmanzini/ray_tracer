@@ -1,5 +1,5 @@
 # camera, active
-# x,v,z,anglex,angley,angley
+# x,v,z,anglex,angley,anglez
 
 c,1
 0,0,-15,0,0,0
@@ -12,7 +12,7 @@ l,1
 5,5,-5
 
 # cone, active
-# x,y,z,vx,vy,vz,angle
+# x,y,z,vx,vy,vz,radius
 # color
 
 o,1

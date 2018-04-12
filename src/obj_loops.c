@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/10 20:30:39 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/11 17:48:47 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/12 14:45:11 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,20 +22,20 @@ void	update_color(t_pix *px, t_obj *ob)
 	float			projection;
 	float			ra;
 	float			light_factor;
-	float			light_power;
+	float			shadow;
 	float			ambient;
 
 	projection = -dot_prod(px->enc->v, px->lig->v);
-	if (projection < 0)
-		projection = 0;
-	light_power = 150;
-	light_factor = light_power / pow(0.5 * light_enc_dist(px->enc, px->lig), 2);
+	shadow = 1;
+	ambient = 0.10;
+	light_factor = 100 / pow(0.5 * light_enc_dist(px->enc, px->lig), 2);
 	if (light_factor > 1)
 		light_factor = 1;
-	ambient = 0.10;
-	ra = projection * (1 - ambient) * light_factor + ambient;
+	if (projection < 0)
+		projection = 0;
 	if (px->shadow)
-		ra *= 0.3;
+		shadow = SHAD_LIGHT;
+	ra = projection * (1 - ambient) * light_factor * shadow + ambient;
 	px->color = rgb_to_ui(ra * ob->rgb[0], ra * ob->rgb[1], ra * ob->rgb[2]);
 }
 

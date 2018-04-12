@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/11 14:52:02 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/12 14:42:15 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 
 # define WIDTH		1024
 # define HEIGHT		1024
+# define SHAD_LIGHT 0.3
 
 typedef struct		s_point_vector
 {
