@@ -27,7 +27,7 @@ First Ray tracer in C. Personal project developed at Ecole 42.
 ![wall columns](imgs/wall_columns.png)
 
 # How to use:
-install minilibx, got to the folder and type "make" in the comand line then run ./rtv1 witht he path of a scene as argument.
+install minilibx, got to the folder and type "make" in the comand line then run ./rtv1 with the path of a scene as argument.
 example:
 ```
 make
