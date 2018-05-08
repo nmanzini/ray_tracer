@@ -3,7 +3,7 @@ First Ray tracer in C. Personal project developed at Ecole 42.
 
 # Functionalities:
 - The program traces rays from one camera to n objects, the objects have shading and cast shadows on eachother based the postion of a singel source of light.
-- it takes keyboard input for moving the camera (WASDQE), moving the light(JK), changing resolution (\[\]) and fov angle (+-) in the scene in real time.
+- it takes keyboard input for moving the camera (W,A,S,D,Q,E), rotate the camera (arrows) moving the light(J,K), changing resolution (\[,\]) and fov angle (+,-) in the scene in real time.
 - RTv1 takes as input a custom file format based on comma separated values (examples found in the scenes folder), from the file it can get these informations:
 	- camera (location and direction);
 	- light (location);
@@ -17,7 +17,8 @@ First Ray tracer in C. Personal project developed at Ecole 42.
 ```
 ./rtv1 scenes/room_sphere
 ```
-![room sphere](imgs/room_sphere_light.gif)
+![room sphere light](imgs/room_sphere_light.gif)
+![room sphere movements](imgs/room_sphere_movements.gif)
 
 # Images
 ![room_cone](imgs/room_cone.png)
