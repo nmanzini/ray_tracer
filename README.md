@@ -12,7 +12,13 @@ First Ray tracer in C. Personal project developed at Ecole 42.
 		- cone (color, location, axis and angle);
 		- plane (color, normal and distance from 0,0,0);
 
-# EXAMPLES
+# Examples
+```
+./rtv1 scenes/room_sphere
+```
+![room sphere](imgs/room_sphere_light.gif)
+
+# Images
 ```
 ./rtv1 scenes/room_cone
 ```
