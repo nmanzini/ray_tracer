@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+         #
+#    By: nicola <nicola@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/29 17:51:18 by nmanzini          #+#    #+#              #
-#    Updated: 2018/04/11 12:16:23 by nmanzini         ###   ########.fr        #
+#    Updated: 2018/05/08 12:01:48 by nicola           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,80 +29,80 @@ SRCS = 	./src/main.c 				\
 		./src/obj_read2.c			\
 		./src/call_keys_camera.c
 
-# OBJ = $(SRC:.c=.o)
+OBJ = $(SRCS:.c=.o)
 
-# LIBFT = libft/libft.a
+LIBFT = libft/libft.a
 
-# HEADER = ./src/rtv1.h
+HEADER = ./src/rtv1.h
 
-# W_FLAGS = -Wall -Werror -Wextra
+W_FLAGS = -Wall -Werror -Wextra
 
-# MLX_FLAGS = -lmlx -framework Opengl -framework Appkit
+MLX_FLAGS = -lmlx -framework Opengl -framework Appkit
 
-# MLX_FLAGS_MAC_AIR =  -I /usr/X11/include -g -L /usr/X11/lib -lX11 -lmlx -lXext $(MLX_FLAGS) 
+MLX_FLAGS_MAC_AIR =  -I /usr/X11/include -g -L /usr/X11/lib -lX11 -lmlx -lXext $(MLX_FLAGS) 
 
-# all: $(NAME)
+all: $(NAME)
 
-# $(OBJ): %.o: %.c
-# 		-@gcc -c -I libft/ $< -o $@
+$(OBJ): %.o: %.c
+		-@gcc -c -I libft/ $< -o $@
 
-# $(LIBFT):
-# 	-@ make -C libft 
+$(LIBFT):
+	-@ make -C libft 
 
-# $(NAME): $(LIBFT) $(OBJ)
-# 	-@ gcc $(MLX_FLAGS)  $(OBJ) $(LIBFT) -o $(NAME)
-
-# clean:
-# 	-@ /bin/rm -f $(OBJ)
-# 	-@ make -C libft clean
-
-# fclean: clean
-# 	-@ /bin/rm -f $(NAME)
-# 	-@ make -C libft fclean
-
-# re: fclean all
-
-
-INCLUDES = rtv1.h
-
-OBJ = $(SRCS:%.c=%.o)
-
-LFTDIR = libft/
-
-LMLXDIR = minilibx_macos/
-LIBFT = libft.a
-LIBMLX = libmlx.a
-FT = ft
-MLX = mlx
-MAKE = make
-FLAGS = -Wall -Wextra -Werror 
-# Add before -ggdb to find out where segfault is
-# SEGFAULT = -fsanitize=address 
-FRAMEWORK = -framework OpenGL -framework AppKit
-
-all : $(NAME)
-
-$(NAME): $(OBJ) $(LFTDIR)$(LIBFT) $(LMLXDIR)$(LIBMLX)
-	-@gcc $(FLAGS) -o $(NAME) $(SEGFAULT) -ggdb $(OBJ) -I$(LFTDIR) -L$(LFTDIR) -l$(FT) \
-	 -I$(LMLXDIR) -L$(LMLXDIR) -l$(MLX) \
-	 $(FRAMEWORK)
-	-@echo $(NAME) Ready
-
-%.o: %.c $(INCLUDES)
-	-@gcc $(FLAGS) -I$(LFTDIR) -I$(LMLXDIR) -c $(SRCS)
-
-$(LFTDIR)$(LIBFT):
-	$(MAKE) -C $(LFTDIR)
-
-$(LMLXDIR)$(LIBMLX):
-	$(MAKE) -C $(LMLXDIR) $(LIBMLX)
+$(NAME): $(LIBFT) $(OBJ)
+	-@ gcc $(MLX_FLAGS_MAC_AIR)  $(OBJ) $(LIBFT) -o $(NAME)
 
 clean:
-	-@/bin/rm -f $(OBJ)
-	-@ make -C $(LFTDIR) clean
+	-@ /bin/rm -f $(OBJ)
+	-@ make -C libft clean
 
 fclean: clean
-	-@/bin/rm -f $(NAME)
-	-@ make -C $(LFTDIR) fclean
+	-@ /bin/rm -f $(NAME)
+	-@ make -C libft fclean
 
 re: fclean all
+
+
+# INCLUDES = rtv1.h
+
+# OBJ = $(SRCS:%.c=%.o)
+
+# LFTDIR = libft/
+
+# LMLXDIR = minilibx_macos/
+# LIBFT = libft.a
+# LIBMLX = libmlx.a
+# FT = ft
+# MLX = mlx
+# MAKE = make
+# FLAGS = -Wall -Wextra -Werror 
+# # Add before -ggdb to find out where segfault is
+# # SEGFAULT = -fsanitize=address 
+# FRAMEWORK = -framework OpenGL -framework AppKit
+
+# all : $(NAME)
+
+# $(NAME): $(OBJ) $(LFTDIR)$(LIBFT) $(LMLXDIR)$(LIBMLX)
+# 	-@gcc $(FLAGS) -o $(NAME) $(SEGFAULT) -ggdb $(OBJ) -I$(LFTDIR) -L$(LFTDIR) -l$(FT) \
+# 	 -I$(LMLXDIR) -L$(LMLXDIR) -l$(MLX) \
+# 	 $(FRAMEWORK)
+# 	-@echo $(NAME) Ready
+
+# %.o: %.c $(INCLUDES)
+# 	-@gcc $(FLAGS) -I$(LFTDIR) -I$(LMLXDIR) -c $(SRCS)
+
+# $(LFTDIR)$(LIBFT):
+# 	$(MAKE) -C $(LFTDIR)
+
+# $(LMLXDIR)$(LIBMLX):
+# 	$(MAKE) -C $(LMLXDIR) $(LIBMLX)
+
+# clean:
+# 	-@/bin/rm -f $(OBJ)
+# 	-@ make -C $(LFTDIR) clean
+
+# fclean: clean
+# 	-@/bin/rm -f $(NAME)
+# 	-@ make -C $(LFTDIR) fclean
+
+# re: fclean all
