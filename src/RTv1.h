@@ -6,16 +6,19 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/29 14:34:10 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/12 14:42:15 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/16 18:20:17 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RTV1_H
 # define RTV1_H
 
-# include "../minilibx_macos/mlx.h"
+// # include "../minilibx_macos/mlx.h"
 # include "../libft/libft.h"
 # include <math.h>
+# include <stdbool.h>
+# include "../SDL2.framework/Headers/sdl.h"
+// # include <sdl.h>
 
 # define PI_R		3.14159265/180
 
@@ -68,6 +71,7 @@ typedef struct		s_pix_struct
 	int				pix_p[2];
 	int				shadow;
 	unsigned int	color;
+	int				rgb[4];
 }					t_pix;
 
 typedef struct		s_obj_struct
@@ -80,12 +84,20 @@ typedef struct		s_obj_struct
 	int				rgb[3];
 }					t_obj;
 
+typedef struct		s_sdl2
+{
+	SDL_Event		event;
+	SDL_Renderer	*renderer;
+	SDL_Window		*window;
+}					t_sdl;
+
 typedef struct		s_data_struct
 {
 	t_mlx			*md;
 	t_cam			*ca;
 	t_pix			*px;
 	t_obj			*ob;
+	t_sdl			sd;
 	int				obj_num;
 }					t_data;
 
@@ -179,6 +191,9 @@ int					get_input(t_data *dt, int ac, char **av);
 */
 void				ray_trace(t_data	*dt);
 float				float_abs(float f);
+void				fill_pixel_res_sdl(t_data *dt,int x,int y);
+void				display(t_data *dt);
+
 /*
 ** data_init.c
 */
@@ -203,12 +218,12 @@ void				call_keys_camera_rot(int keycode, t_data *dt);
 /*
 ** mlx_utils.c
 */
-void				make_image(t_mlx *md);
-void				img_square(t_mlx *md, unsigned int color);
-void				fill_pixel(t_mlx *md, int x, int y, unsigned int color);
+// void				make_image(t_mlx *md);
+// void				img_square(t_mlx *md, unsigned int color);
+// void				fill_pixel(t_mlx *md, int x, int y, unsigned int color);
 void				display(t_data	*dt);
-void				fill_pixel_res(t_data *dt, int r_x, int r_y,
-								unsigned int color);
+// void				fill_pixel_res(t_data *dt, int r_x, int r_y,
+								// unsigned int color);
 /*
 ** colors_utlis.c
 */

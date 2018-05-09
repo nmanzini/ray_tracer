@@ -6,7 +6,7 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/10 20:30:39 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/12 14:45:11 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/16 17:20:12 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,12 @@ void	update_color(t_pix *px, t_obj *ob)
 	if (px->shadow)
 		shadow = SHAD_LIGHT;
 	ra = projection * (1 - ambient) * light_factor * shadow + ambient;
-	px->color = rgb_to_ui(ra * ob->rgb[0], ra * ob->rgb[1], ra * ob->rgb[2]);
+	// px->color = rgb_to_ui(ra * ob->rgb[0], ra * ob->rgb[1], ra * ob->rgb[2]);
+	px->rgb[0] = ra * ob->rgb[0];
+	px->rgb[1] = ra * ob->rgb[1];
+	px->rgb[2] = ra * ob->rgb[2];
+	px->rgb[3] = 255;
+	// SDL_SetRenderDrawColor(dt->sd->renderer, ra * ob->rgb[0], ra * ob->rgb[1], ra * ob->rgb[2], 255);
 }
 
 /*
@@ -98,7 +103,8 @@ void	color_point(t_data *dt, int i)
 	update_light_v(dt->px->enc, dt->px->lig);
 	dt->px->shadow = loop_obj_shadow(dt->px->enc, dt->px->lig, dt->ob, i);
 	update_color(dt->px, &dt->ob[i]);
-	fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
+	fill_pixel_res_sdl(dt,dt->px->pix_p[0],dt->px->pix_p[1]);
+	// fill_pixel_res(dt, dt->px->pix_p[0], dt->px->pix_p[1], dt->px->color);
 }
 
 /*

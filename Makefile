@@ -6,15 +6,14 @@
 #    By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/11/29 17:51:18 by nmanzini          #+#    #+#              #
-#    Updated: 2018/04/11 12:16:23 by nmanzini         ###   ########.fr        #
+#    Updated: 2018/04/18 14:24:25 by nmanzini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = rtv1
+NAME = RTv1
 
-SRCS = 	./src/main.c 				\
+SRC = 	./src/main.c 				\
 		./src/call_keys_general.c	\
-		./src/mlx_utils.c			\
 		./src/colors_utils.c		\
 		./src/data_init.c  			\
 		./src/input.c				\
@@ -29,80 +28,37 @@ SRCS = 	./src/main.c 				\
 		./src/obj_read2.c			\
 		./src/call_keys_camera.c
 
-# OBJ = $(SRC:.c=.o)
+OBJ = $(SRC:.c=.o)
 
-# LIBFT = libft/libft.a
+LIBFT = libft/libft.a
 
-# HEADER = ./src/rtv1.h
+HEADER = ./src/rtv1.h
 
-# W_FLAGS = -Wall -Werror -Wextra
+W_FLAGS = -Wall -Werror -Wextra
 
-# MLX_FLAGS = -lmlx -framework Opengl -framework Appkit
+MLX_FLAGS = -lmlx -framework Opengl -framework Appkit
 
-# MLX_FLAGS_MAC_AIR =  -I /usr/X11/include -g -L /usr/X11/lib -lX11 -lmlx -lXext $(MLX_FLAGS) 
+SDL_FLAGS =  -framework SDL2 -I./SDL2.framework/Headers
 
-# all: $(NAME)
+MLX_FLAGS_MAC_AIR =  -I /usr/X11/include -g -L /usr/X11/lib -lX11 -lmlx -lXext $(MLX_FLAGS) 
 
-# $(OBJ): %.o: %.c
-# 		-@gcc -c -I libft/ $< -o $@
+all: $(NAME)
 
-# $(LIBFT):
-# 	-@ make -C libft 
+$(OBJ): %.o: %.c
+		-@gcc -c -I libft/ $< -o $@
 
-# $(NAME): $(LIBFT) $(OBJ)
-# 	-@ gcc $(MLX_FLAGS)  $(OBJ) $(LIBFT) -o $(NAME)
+$(LIBFT):
+	-@ make -C libft 
 
-# clean:
-# 	-@ /bin/rm -f $(OBJ)
-# 	-@ make -C libft clean
-
-# fclean: clean
-# 	-@ /bin/rm -f $(NAME)
-# 	-@ make -C libft fclean
-
-# re: fclean all
-
-
-INCLUDES = rtv1.h
-
-OBJ = $(SRCS:%.c=%.o)
-
-LFTDIR = libft/
-
-LMLXDIR = minilibx_macos/
-LIBFT = libft.a
-LIBMLX = libmlx.a
-FT = ft
-MLX = mlx
-MAKE = make
-FLAGS = -Wall -Wextra -Werror 
-# Add before -ggdb to find out where segfault is
-# SEGFAULT = -fsanitize=address 
-FRAMEWORK = -framework OpenGL -framework AppKit
-
-all : $(NAME)
-
-$(NAME): $(OBJ) $(LFTDIR)$(LIBFT) $(LMLXDIR)$(LIBMLX)
-	-@gcc $(FLAGS) -o $(NAME) $(SEGFAULT) -ggdb $(OBJ) -I$(LFTDIR) -L$(LFTDIR) -l$(FT) \
-	 -I$(LMLXDIR) -L$(LMLXDIR) -l$(MLX) \
-	 $(FRAMEWORK)
-	-@echo $(NAME) Ready
-
-%.o: %.c $(INCLUDES)
-	-@gcc $(FLAGS) -I$(LFTDIR) -I$(LMLXDIR) -c $(SRCS)
-
-$(LFTDIR)$(LIBFT):
-	$(MAKE) -C $(LFTDIR)
-
-$(LMLXDIR)$(LIBMLX):
-	$(MAKE) -C $(LMLXDIR) $(LIBMLX)
+$(NAME): $(LIBFT) $(OBJ)
+	-@ gcc $(W_FLAGS) $(SDL_FLAGS)  $(OBJ) $(LIBFT) -o $(NAME)
 
 clean:
-	-@/bin/rm -f $(OBJ)
-	-@ make -C $(LFTDIR) clean
+	-@ /bin/rm -f $(OBJ)
+	-@ make -C libft clean
 
 fclean: clean
-	-@/bin/rm -f $(NAME)
-	-@ make -C $(LFTDIR) fclean
+	-@ /bin/rm -f $(NAME)
+	-@ make -C libft fclean
 
 re: fclean all

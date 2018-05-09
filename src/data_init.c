@@ -6,32 +6,11 @@
 /*   By: nmanzini <nmanzini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 17:07:52 by nmanzini          #+#    #+#             */
-/*   Updated: 2018/04/11 17:49:32 by nmanzini         ###   ########.fr       */
+/*   Updated: 2018/04/16 17:17:40 by nmanzini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rtv1.h"
-
-t_mlx	*mlx_data_init_return(t_mlx *md)
-{
-	static t_mlx		actual_md;
-	static t_img_prm	actual_ip;
-
-	md = &actual_md;
-	md->ip = &actual_ip;
-	md->width = WIDTH;
-	md->height = HEIGHT;
-	md->mlx = mlx_init();
-	md->win = mlx_new_window(md->mlx, md->width, md->height, "RTv1");
-	make_image(md);
-	return (md);
-}
-
-/*
-** fills in the size of the screen in fornt of the camera.
-** screen sizes: 2 = distance, 0 = x size in real dimension,
-**  1 = y size in real dimension
-*/
 
 void	cam_data_update(t_cam *ca)
 {
