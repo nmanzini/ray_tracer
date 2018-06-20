@@ -1,5 +1,6 @@
 # 42-RTv1
 First Ray tracer in C. Personal project developed at Ecole 42.
+https://www.youtube.com/watch?v=Iyue4SjYa5Y
 
 # Functionalities:
 - The program traces rays from one camera to n objects, the objects have shading and cast shadows on each other based the position of a single source of light.
