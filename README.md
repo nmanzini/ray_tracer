@@ -1,6 +1,5 @@
 # 42-RTv1
 First Ray tracer in C. Personal project developed at Ecole 42.
-https://www.youtube.com/watch?v=Iyue4SjYa5Y
 
 # Functionalities:
 - The program traces rays from one camera to n objects, the objects have shading and cast shadows on each other based the position of a single source of light.
@@ -15,13 +14,20 @@ https://www.youtube.com/watch?v=Iyue4SjYa5Y
 		- plane (color, normal and distance from 0,0,0);
 
 # Examples
+some images ad videos of Rtv1 in action
+
+[![Youtube video link](https://img.youtube.com/vi/Iyue4SjYa5Y/0.jpg)](https://www.youtube.com/watch?v=Iyue4SjYa5Y)
+*youtube video*
+
 ```
 ./rtv1 scenes/room_sphere
 ```
 ![room sphere light](imgs/room_sphere_light.gif)
+*moving the light*
 ![room sphere movements](imgs/room_sphere_movements.gif)
+*moving the camera*
 
-# Images
+## Images
 ![room_cone](imgs/room_cone.png)
 ![room sphere](imgs/room_sphere.png)
 ![room z](imgs/room_z.png)
